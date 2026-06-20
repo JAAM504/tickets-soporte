@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Tickets — Soporte TI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;
+  --text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --radius:8px;--radius-lg:12px;
+  --blue-bg:#E6F1FB;--blue-text:#185FA5;
+  --amber-bg:#FAEEDA;--amber-text:#854F0B;
+  --green-bg:#EAF3DE;--green-text:#3B6D11;
+  --gray-bg:#F1EFE8;--gray-text:#5F5E5A;
+  --red-bg:#FCEBEB;--red-text:#A32D2D;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1e1e1c;--bg2:#252523;--bg3:#2c2c29;
+    --text:#e8e6df;--text2:#9a9891;--text3:#6b6a65;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --blue-bg:#0c447c;--blue-text:#B5D4F4;
+    --amber-bg:#633806;--amber-text:#FAC775;
+    --green-bg:#27500A;--green-text:#C0DD97;
+    --gray-bg:#444441;--gray-text:#D3D1C7;
+    --red-bg:#791F1F;--red-text:#F7C1C1;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;min-height:100vh}
+.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
+.header-left h1{font-size:20px;font-weight:500;display:flex;align-items:center;gap:8px}
+.header-left p{font-size:12px;color:var(--text3);margin-top:3px}
+.btn-primary{background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 16px;height:36px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-primary:hover{opacity:.85}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stat{background:var(--bg2);border-radius:var(--radius);padding:.875rem 1rem}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.stat-val{font-size:24px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Toolbar */
+.toolbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.toolbar input,.toolbar select{font-size:13px;padding:6px 10px;border-radius:var(--radius);border:.5px solid var(--border2);background:var(--bg);color:var(--text);height:34px;outline:none}
+.toolbar input{flex:1;min-width:180px}
+.toolbar input:focus,.toolbar select:focus{border-color:var(--text3)}
+
+/* Ticket list */
+.ticket-list{display:flex;flex-direction:column;gap:8px}
+.ticket{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1rem;cursor:pointer;transition:border-color .15s}
+.ticket:hover{border-color:var(--border2)}
+.ticket-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ticket-title{font-size:14px;font-weight:500}
+.ticket-id{font-size:11px;color:var(--text3);white-space:nowrap}
+.ticket-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.b-abierto{background:var(--blue-bg);color:var(--blue-text)}
+.b-en-proceso{background:var(--amber-bg);color:var(--amber-text)}
+.b-resuelto{background:var(--green-bg);color:var(--green-text)}
+.b-cerrado{background:var(--gray-bg);color:var(--gray-text)}
+.cat-tag{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:3px}
+.ticket-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:6px}
+.ticket-foot{display:flex;align-items:center;justify-content:space-between;padding-top:7px;border-top:.5px solid var(--border)}
+.avatar{width:20px;height:20px;border-radius:50%;background:var(--blue-bg);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--blue-text)}
+.user-info{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.prio{font-size:11px;display:flex;align-items:center;gap:3px}
+.prio-alta{color:var(--red-text)}
+.prio-media{color:var(--amber-text)}
+.prio-baja{color:var(--green-text)}
+.date{font-size:11px;color:var(--text3)}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:13px;background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg)}
+.empty i{font-size:28px;display:block;margin:0 auto 8px;opacity:.5}
+
+/* Loading */
+.loading{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+
+/* Modal overlay (no position:fixed — use normal flow wrapper) */
+.modal-wrap{display:none;min-height:500px;background:rgba(0,0,0,.5);border-radius:var(--radius-lg);align-items:flex-start;justify-content:center;padding:2rem 1rem;margin-top:1rem}
+.modal-wrap.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);border:.5px solid var(--border2);width:100%;max-width:480px;padding:1.375rem}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.125rem}
+.modal-head h2{font-size:16px;font-weight:500}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;padding:2px 4px}
+.close-btn:hover{color:var(--text2)}
+.field{margin-bottom:.875rem}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:7px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none}
+.field textarea{resize:vertical;min-height:80px;font-family:inherit;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--text2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.125rem}
+.btn-cancel{background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 14px;height:34px;font-size:13px;cursor:pointer;color:var(--text2)}
+.btn-cancel:hover{background:var(--bg2)}
+.btn-submit{background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 16px;height:34px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-submit:hover{opacity:.85}
+.btn-danger{background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 14px;height:34px;font-size:13px;cursor:pointer;color:var(--red-text)}
+.btn-danger:hover{background:var(--red-bg)}
+
+/* Detail modal */
+.detail-body{font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius);margin-bottom:1rem}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.di{font-size:12px}
+.di-label{color:var(--text3);margin-bottom:2px}
+.di-val{font-weight:500}
+.status-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.status-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:.5px solid var(--border2);cursor:pointer;background:var(--bg2);color:var(--text2)}
+.status-btn:hover{background:var(--bg3)}
+.status-btn.active{font-weight:500;border-color:var(--text);color:var(--text)}
+.section-label{font-size:12px;color:var(--text3);margin-bottom:6px}
+
+/* Toast */
+.toast{position:relative;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--radius);font-size:13px;display:none;margin-bottom:1rem;align-items:center;gap:8px}
+.toast.show{display:flex}
+
+@media(max-width:600px){
+  .stats{grid-template-columns:1fr 1fr}
+  .row2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+
+  <div class="header">
+    <div class="header-left">
+      <h1><i class="ti ti-ticket" aria-hidden="true"></i>Gestión de tickets — Soporte TI</h1>
+      <p id="header-sub">Cargando tickets…</p>
+    </div>
+    <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus" aria-hidden="true"></i>Nuevo ticket</button>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="s-total">—</div></div>
+    <div class="stat"><div class="stat-label">Abiertos</div><div class="stat-val" id="s-open">—</div></div>
+    <div class="stat"><div class="stat-label">En proceso</div><div class="stat-val" id="s-proc">—</div></div>
+    <div class="stat"><div class="stat-label">Resueltos</div><div class="stat-val" id="s-done">—</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Buscar tickets…" oninput="render()">
+    <select id="f-estado" onchange="render()">
+      <option value="">Todos los estados</option>
+      <option>Abierto</option>
+      <option>En proceso</option>
+      <option>Resuelto</option>
+      <option>Cerrado</option>
+    </select>
+    <select id="f-cat" onchange="render()">
+      <option value="">Todas las categorías</option>
+      <option>Red</option>
+      <option>Hardware</option>
+      <option>Software</option>
+      <option>Accesos</option>
+      <option>Impresoras</option>
+      <option>Otro</option>
+    </select>
+    <select id="f-prio" onchange="render()">
+      <option value="">Todas las prioridades</option>
+      <option>Alta</option>
+      <option>Media</option>
+      <option>Baja</option>
+    </select>
+  </div>
+
+  <div class="ticket-list" id="list"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
+
+  <!-- Create modal -->
+  <div class="modal-wrap" id="modal-new">
+    <div class="modal">
+      <div class="modal-head">
+        <h2><i class="ti ti-plus" aria-hidden="true" style="margin-right:5px"></i>Nuevo ticket</h2>
+        <button class="close-btn" onclick="closeNew()" aria-label="Cerrar">×</button>
+      </div>
+      <div class="field">
+        <label for="n-title">Título *</label>
+        <input id="n-title" type="text" placeholder="Describe el problema brevemente">
+      </div>
+      <div class="field">
+        <label for="n-desc">Descripción</label>
+        <textarea id="n-desc" placeholder="Detalla el problema, equipo afectado, pasos para reproducirlo…"></textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="n-cat">Categoría</label>
+          <select id="n-cat">
+            <option>Red</option>
+            <option>Hardware</option>
+            <option>Software</option>
+            <option>Accesos</option>
+            <option>Impresoras</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="n-prio">Prioridad</label>
+          <select id="n-prio">
+            <option>Media</option>
+            <option>Alta</option>
+            <option>Baja</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="n-user">Solicitante</label>
+        <input id="n-user" type="text" placeholder="Nombre de quien reporta">
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeNew()">Cancelar</button>
+        <button class="btn-submit" onclick="createTicket()">Crear ticket</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail modal -->
+  <div class="modal-wrap" id="modal-det">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <div style="font-size:11px;color:var(--text3)" id="d-id"></div>
+          <h2 id="d-title" style="font-size:15px;margin-top:2px"></h2>
+        </div>
+        <button class="close-btn" onclick="closeDet()" aria-label="Cerrar">×</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.875rem" id="d-badges"></div>
+      <div class="detail-body" id="d-body"></div>
+      <div class="detail-grid" id="d-info"></div>
+      <div class="section-label">Cambiar estado</div>
+      <div class="status-row" id="d-status"></div>
+      <div class="modal-btns">
+        <button class="btn-danger" onclick="deleteTicket()"><i class="ti ti-trash" aria-hidden="true" style="margin-right:3px"></i>Eliminar</button>
+        <button class="btn-cancel" onclick="closeDet()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'tickets-data';
+const catIcon = {Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer',Otro:'ti-help-circle'};
+const statClass = {Abierto:'b-abierto','En proceso':'b-en-proceso',Resuelto:'b-resuelto',Cerrado:'b-cerrado'};
+const prioClass = {Alta:'prio-alta',Media:'prio-media',Baja:'prio-baja'};
+const prioIcon = {Alta:'ti-arrow-up',Media:'ti-minus',Baja:'ti-arrow-down'};
+
+let tickets = [];
+let nextId = 1;
+let currentId = null;
+
+function pad(n){return 'TK-'+String(n).padStart(3,'0')}
+function today(){return new Date().toISOString().slice(0,10)}
+function fmt(d){if(!d)return '—';const[y,m,dy]=d.split('-');return `${dy}/${m}/${y}`}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+
+async function loadTickets(){
+  try{
+    const r = await window.storage.get(STORAGE_KEY);
+    if(r && r.value){
+      const data = JSON.parse(r.value);
+      tickets = data.tickets || [];
+      nextId = data.nextId || tickets.length + 1;
+    } else {
+      tickets = defaultTickets();
+      nextId = tickets.length + 1;
+      await saveTickets();
+    }
+  } catch(e){
+    tickets = defaultTickets();
+    nextId = tickets.length + 1;
+  }
+  render();
+  const now = new Date();
+  document.getElementById('header-sub').textContent = `Actualizado ${now.toLocaleDateString('es-HN')} ${now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'})}`;
+}
+
+async function saveTickets(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify({tickets, nextId}));
+  } catch(e){ console.error('Storage error', e) }
+}
+
+function defaultTickets(){
+  return [
+    {id:'TK-001',title:'Sin acceso a internet en sala 3',desc:'Los equipos de la sala 3 no tienen conexión desde esta mañana. Afecta 8 computadoras. El router parece encendido.',cat:'Red',prio:'Alta',estado:'En proceso',user:'Ana Mejía',date:'2026-06-18'},
+    {id:'TK-002',title:'Cambio de teclado — puesto 12',desc:'El teclado del puesto 12 tiene varias teclas que no responden. Se necesita reemplazo urgente.',cat:'Hardware',prio:'Baja',estado:'Abierto',user:'Carlos Reyes',date:'2026-06-19'},
+    {id:'TK-003',title:'Instalación de Office 365',desc:'El equipo de contabilidad necesita Office 365 en 3 equipos nuevos. Ya tienen licencias disponibles.',cat:'Software',prio:'Media',estado:'Abierto',user:'Lucía Paz',date:'2026-06-19'},
+    {id:'TK-004',title:'Usuario bloqueado en sistema ERP',desc:'La usuaria María Torres no puede acceder al ERP desde el viernes. Cuenta bloqueada por intentos fallidos.',cat:'Accesos',prio:'Alta',estado:'Resuelto',user:'María Torres',date:'2026-06-17'},
+    {id:'TK-005',title:'Impresora sin papel — piso 2',desc:'La impresora HP del piso 2 muestra error de papel aunque se cargó resma nueva.',cat:'Impresoras',prio:'Media',estado:'Cerrado',user:'José Zelaya',date:'2026-06-15'},
+  ];
+}
+
+function getFiltered(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const est=document.getElementById('f-estado').value;
+  const cat=document.getElementById('f-cat').value;
+  const prio=document.getElementById('f-prio').value;
+  return tickets.filter(t=>{
+    if(q && !t.title.toLowerCase().includes(q) && !t.desc.toLowerCase().includes(q)) return false;
+    if(est && t.estado!==est) return false;
+    if(cat && t.cat!==cat) return false;
+    if(prio && t.prio!==prio) return false;
+    return true;
+  });
+}
+
+function render(){
+  document.getElementById('s-total').textContent = tickets.length;
+  document.getElementById('s-open').textContent = tickets.filter(t=>t.estado==='Abierto').length;
+  document.getElementById('s-proc').textContent = tickets.filter(t=>t.estado==='En proceso').length;
+  document.getElementById('s-done').textContent = tickets.filter(t=>t.estado==='Resuelto').length;
+
+  const list = getFiltered();
+  const el = document.getElementById('list');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><i class="ti ti-ticket-off"></i>No hay tickets que coincidan con los filtros seleccionados.</div>';
+    return;
+  }
+  el.innerHTML = list.map(t=>`
+    <div class="ticket" onclick="openDet('${t.id}')" role="button" tabindex="0" aria-label="Ticket ${t.id}">
+      <div class="ticket-top">
+        <div class="ticket-title">${t.title}</div>
+        <div class="ticket-id">${t.id}</div>
+      </div>
+      <div class="ticket-meta">
+        <span class="badge ${statClass[t.estado]}">${t.estado}</span>
+        <span class="cat-tag"><i class="ti ${catIcon[t.cat]||'ti-help-circle'}" aria-hidden="true"></i>${t.cat}</span>
+      </div>
+      <div class="ticket-desc">${t.desc}</div>
+      <div class="ticket-foot">
+        <div class="user-info"><span class="avatar">${initials(t.user)}</span>${t.user}</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="prio ${prioClass[t.prio]}"><i class="ti ${prioIcon[t.prio]}" aria-hidden="true"></i>${t.prio}</span>
+          <span class="date">${fmt(t.date)}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openNew(){document.getElementById('modal-new').classList.add('open')}
+function closeNew(){
+  document.getElementById('modal-new').classList.remove('open');
+  ['n-title','n-desc','n-user'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function createTicket(){
+  const title = document.getElementById('n-title').value.trim();
+  if(!title){document.getElementById('n-title').focus();return;}
+  const t = {
+    id: pad(nextId++),
+    title,
+    desc: document.getElementById('n-desc').value.trim() || 'Sin descripción adicional.',
+    cat: document.getElementById('n-cat').value,
+    prio: document.getElementById('n-prio').value,
+    estado: 'Abierto',
+    user: document.getElementById('n-user').value.trim() || 'Sin especificar',
+    date: today()
+  };
+  tickets.unshift(t);
+  await saveTickets();
+  closeNew();
+  render();
+  showToast('Ticket '+t.id+' creado correctamente');
+}
+
+function openDet(id){
+  currentId = id;
+  const t = tickets.find(x=>x.id===id);
+  document.getElementById('d-id').textContent = t.id;
+  document.getElementById('d-title').textContent = t.title;
+  document.getElementById('d-body').textContent = t.desc;
+  document.getElementById('d-badges').innerHTML=`
+    <span class="badge ${statClass[t.estado]}">${t.estado}</span>
+    <span class="badge" style="background:var(--bg2);color:var(--text2)"><i class="ti ${catIcon[t.cat]||'ti-help-circle'}" aria-hidden="true" style="margin-right:3px"></i>${t.cat}</span>
+    <span class="prio ${prioClass[t.prio]}" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti ${prioIcon[t.prio]}" aria-hidden="true"></i>Prioridad ${t.prio}</span>
+  `;
+  document.getElementById('d-info').innerHTML=`
+    <div class="di"><div class="di-label">Solicitante</div><div class="di-val">${t.user}</div></div>
+    <div class="di"><div class="di-label">Fecha de creación</div><div class="di-val">${fmt(t.date)}</div></div>
+  `;
+  const estados = ['Abierto','En proceso','Resuelto','Cerrado'];
+  document.getElementById('d-status').innerHTML = estados.map(e=>`
+    <button class="status-btn ${e===t.estado?'active':''}" onclick="setStatus('${e}')">${e}</button>
+  `).join('');
+  document.getElementById('modal-det').classList.add('open');
+}
+function closeDet(){document.getElementById('modal-det').classList.remove('open');currentId=null;}
+
+async function setStatus(est){
+  const t = tickets.find(x=>x.id===currentId);
+  if(t){
+    t.estado = est;
+    await saveTickets();
+    render();
+    openDet(currentId);
+  }
+}
+
+async function deleteTicket(){
+  if(!confirm('¿Eliminar este ticket? Esta acción no se puede deshacer.')) return;
+  const id = currentId;
+  tickets = tickets.filter(x=>x.id!==id);
+  await saveTickets();
+  closeDet();
+  render();
+  showToast('Ticket '+id+' eliminado');
+}
+
+function showToast(msg){
+  const el = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeNew();closeDet();}
+});
+
+loadTickets();
+</script>
+</body>
+</html>
