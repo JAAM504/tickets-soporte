@@ -235,7 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script>
 const SUPABASE_URL='https://mkaupezvsbsgehfoxxsl.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM';
-const ADMIN_EMAIL='jaguilar@distritohotelero.com';
+const ADMIN_EMAIL='';//managed via supabase admins table
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const catIcon={Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer',Otro:'ti-help-circle'};
 const statClass={Abierto:'b-abierto','En proceso':'b-en-proceso',Resuelto:'b-resuelto',Cerrado:'b-cerrado'};
@@ -296,7 +296,8 @@ async function doLogout(){
 
 async function initApp(user){
   currentUser=user;
-  isAdmin=user.email===ADMIN_EMAIL;
+  const{data:adminData}=await sb.from('admins').select('email').eq('email',user.email).single();
+  isAdmin=!!adminData;
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-wrap').classList.add('visible');
   const name=user.user_metadata?.full_name||user.email;
@@ -416,4 +417,3 @@ sb.auth.onAuthStateChange((_,session)=>{
 </script>
 </body>
 </html>
-
