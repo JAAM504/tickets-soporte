@@ -196,6 +196,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <input type="text" id="search" placeholder="Buscar solicitudes…" oninput="render()">
         <select id="f-estado" onchange="render()"><option value="">Todos los estados</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select>
         <select id="f-cat" onchange="render()"><option value="">Todas las categorías</option></select>
+        <select id="f-hotel" onchange="render()"><option value="">Todos los hoteles</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select>
         <select id="f-prio" onchange="render()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select>
       </div>
     </div>
@@ -216,6 +217,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <option value="Mantenimiento">Mantenimiento</option>
       </select>
     </div>
+    <div class="field"><label>Hotel *</label><select id="n-hotel"><option value="">Selecciona el hotel</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select></div>
     <div class="field"><label>Título *</label><input id="n-title" type="text" placeholder="Describe el problema brevemente"></div>
     <div class="field"><label>Descripción</label><textarea id="n-desc" style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:80px;font-family:inherit;line-height:1.5" placeholder="Detalla el problema, ubicación, equipo afectado…"></textarea></div>
     <div class="row2">
@@ -376,6 +378,8 @@ function getFiltered(){
     if(q&&!t.titulo.toLowerCase().includes(q)&&!(t.descripcion||'').toLowerCase().includes(q))return false;
     if(est&&t.estado!==est)return false;
     if(cat&&t.categoria!==cat)return false;
+    const hotel=document.getElementById('f-hotel')?document.getElementById('f-hotel').value:'';
+    if(hotel&&t.hotel!==hotel)return false;
     if(prio&&t.prioridad!==prio)return false;
     return true;
   });
@@ -405,9 +409,11 @@ function updateCats(){
 }
 
 function openNew(){updateCats();document.getElementById('modal-new').classList.add('open');}
-function closeNew(){document.getElementById('modal-new').classList.remove('open');['n-title','n-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('btn-create').disabled=false;document.getElementById('btn-create').textContent='Enviar solicitud';}
+function closeNew(){document.getElementById('modal-new').classList.remove('open');['n-title','n-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('n-hotel').value='';document.getElementById('btn-create').disabled=false;document.getElementById('btn-create').textContent='Enviar solicitud';}
 
 async function createTicket(){
+  const hotel=document.getElementById('n-hotel').value;
+  if(!hotel){document.getElementById('n-hotel').focus();return;}
   const titulo=document.getElementById('n-title').value.trim();
   if(!titulo){document.getElementById('n-title').focus();return;}
   const btn=document.getElementById('btn-create');btn.disabled=true;btn.textContent='Enviando…';
@@ -421,7 +427,7 @@ async function createTicket(){
     prioridad:document.getElementById('n-prio').value,
     estado:'Abierto',solicitante:nombre,fecha:today(),
     user_id:currentUser.id,user_email:currentUser.email,
-    departamento:dept
+    departamento:dept,hotel:hotel
   }]);
   if(error){showToast('Error: '+error.message,true);btn.disabled=false;btn.textContent='Enviar solicitud';return;}
   nextNum++;closeNew();await loadTickets();showToast('Solicitud '+codigo+' enviada correctamente');
