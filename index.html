@@ -490,7 +490,9 @@ async function setStatus(est){
       });
     }
   }
-  await loadTickets();openDet(currentId);
+  await loadTickets();
+  closeDet();
+  showToast('Estado actualizado a: '+est);
 }
 
 async function deleteTicket(){
