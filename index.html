@@ -480,19 +480,22 @@ function closeDet(){document.getElementById('modal-det').classList.remove('open'
 async function setStatus(est){
   const{error}=await sb.from('tickets').update({estado:est}).eq('id',currentId);
   if(error){showToast('Error: '+error.message,true);return;}
+  // Cerrar modal y actualizar lista inmediatamente
+  const savedId=currentId;
+  closeDet();
+  await loadTickets();
+  showToast('Estado actualizado a: '+est);
+  // Enviar correo en segundo plano si es Resuelto
   if(est==='Resuelto'){
-    const t=allTickets.find(x=>x.id===currentId);
+    const t=allTickets.find(x=>x.id===savedId);
     if(t&&t.user_email){
-      await fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{
+      fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM'},
         body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email,estado:est})
-      });
+      }).catch(()=>{});
     }
   }
-  await loadTickets();
-  closeDet();
-  showToast('Estado actualizado a: '+est);
 }
 
 async function deleteTicket(){
