@@ -237,6 +237,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.875rem" id="d-badges"></div>
     <div class="detail-body" id="d-body"></div>
     <div class="detail-grid" id="d-info"></div>
+      <div class="field" id="obs-wrap">
+        <label style="font-size:12px;color:var(--text3);margin-bottom:6px;display:block">Observación</label>
+        <textarea id="obs-text" style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:72px;font-family:inherit;line-height:1.5" placeholder="Agregar observación..."></textarea>
+        <button id="obs-btn" style="margin-top:6px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:32px;font-size:12px;cursor:pointer;font-weight:500" onclick="saveObs()">Guardar observación</button>
+      </div>
+      <div id="obs-view" style="display:none;margin-bottom:1rem">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Observación</div>
+        <div id="obs-content" style="font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius)"></div>
+      </div>
     <div id="admin-actions" style="display:none"><div class="section-label">Cambiar estado</div><div class="status-row" id="d-status"></div></div>
     <div class="modal-btns"><button class="btn-danger" id="btn-delete" style="display:none" onclick="deleteTicket()"><i class="ti ti-trash" style="margin-right:3px"></i>Eliminar</button><button class="btn-cancel" onclick="closeDet()">Cerrar</button></div>
   </div>
@@ -443,6 +452,24 @@ function openDet(id){
   const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
   document.getElementById('d-badges').innerHTML='<span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+'<span class="badge" style="background:var(--bg2);color:var(--text2)"><i class="ti '+(catIcon[t.categoria]||'ti-help-circle')+'" style="margin-right:3px"></i>'+t.categoria+'</span><span class="prio '+prioClass[t.prioridad]+'" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti '+prioIcon[t.prioridad]+'"></i>Prioridad '+t.prioridad+'</span>';
   document.getElementById('d-info').innerHTML='<div class="di"><div class="di-label">Solicitante</div><div class="di-val">'+(t.solicitante||'—')+'</div></div><div class="di"><div class="di-label">Correo</div><div class="di-val">'+(t.user_email||'—')+'</div></div><div class="di"><div class="di-label">Hotel</div><div class="di-val">'+(t.hotel||'\u2014')+'</div></div><div class="di"><div class="di-label">Departamento</div><div class="di-val">'+(t.departamento||'—')+'</div></div><div class="di"><div class="di-label">Fecha</div><div class="di-val">'+fmt(t.fecha)+'</div></div>';
+  // Observacion
+  const obsText = document.getElementById('obs-text');
+  const obsView = document.getElementById('obs-view');
+  const obsWrap = document.getElementById('obs-wrap');
+  const obsContent = document.getElementById('obs-content');
+  if(isAdmin()){
+    obsWrap.style.display='block';
+    obsView.style.display='none';
+    obsText.value = t.observacion||'';
+  } else {
+    obsWrap.style.display='none';
+    if(t.observacion){
+      obsView.style.display='block';
+      obsContent.textContent = t.observacion;
+    } else {
+      obsView.style.display='none';
+    }
+  }
   document.getElementById('admin-actions').style.display=isAdmin()?'block':'none';
   document.getElementById('btn-delete').style.display=isAdmin()?'inline-flex':'none';
   if(isAdmin()){const estados=['Abierto','En proceso','Resuelto','Cerrado'];document.getElementById('d-status').innerHTML=estados.map(e=>'<button class="status-btn '+(e===t.estado?'active':'')+'" onclick="setStatus(\''+e+'\')">'+e+'</button>').join('');}
@@ -472,6 +499,17 @@ async function deleteTicket(){
   const{error}=await sb.from('tickets').delete().eq('id',currentId);
   if(error){showToast('Error: '+error.message,true);return;}
   closeDet();await loadTickets();showToast('Solicitud '+codigo+' eliminada');
+}
+
+async function saveObs(){
+  const obs = document.getElementById('obs-text').value.trim();
+  const btn = document.getElementById('obs-btn');
+  btn.disabled=true;btn.textContent='Guardando...';
+  const{error}=await sb.from('tickets').update({observacion:obs}).eq('id',currentId);
+  if(error){showToast('Error: '+error.message,true);btn.disabled=false;btn.textContent='Guardar observación';return;}
+  await loadTickets();
+  btn.disabled=false;btn.textContent='Guardar observación';
+  showToast('Observación guardada');
 }
 
 function showToast(msg,isError=false){
