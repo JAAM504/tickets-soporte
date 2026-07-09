@@ -145,13 +145,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div id="form-login">
         <div class="field"><label>Correo electrónico</label><input id="l-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('l-pass',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i class="ti ti-eye" style="font-size:16px"></i></button></div></div>
+        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('l-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i id="l-pass-eye" class="ti ti-eye" style="font-size:16px"></i></button></div></div>
         <button class="btn-full" id="btn-login" onclick="doLogin()">Iniciar sesión</button>
       </div>
       <div id="form-register" style="display:none">
         <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Tu nombre"></div>
         <div class="field"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doRegister()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('r-pass',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i class="ti ti-eye" style="font-size:16px"></i></button></div></div>
+        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doRegister()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('r-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i id="r-pass-eye" class="ti ti-eye" style="font-size:16px"></i></button></div></div>
         <button class="btn-full" id="btn-register" onclick="doRegister()">Crear cuenta</button>
       </div>
       <div id="login-msg" class="login-msg" style="display:none"></div>
@@ -277,12 +277,16 @@ function fmt(d){if(!d)return '—';const[y,m,dy]=d.split('-');return dy+'/'+m+'/
 function initials(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
 function isAdmin(){return userRole==='superadmin'||userRole==='admin'}
 
-function togglePass(inputId, btn){
+function togglePass(inputId){
   const input = document.getElementById(inputId);
-  const icon = btn.querySelector('i');
-  const isPassword = input.getAttribute('type') === 'password';
-  input.setAttribute('type', isPassword ? 'text' : 'password');
-  icon.className = isPassword ? 'ti ti-eye-off' : 'ti ti-eye';
+  const icon = document.getElementById(inputId+'-eye');
+  if(input.type==='password'){
+    input.type='text';
+    icon.className='ti ti-eye-off';
+  } else {
+    input.type='password';
+    icon.className='ti ti-eye';
+  }
 }
 
 function switchTab(t){
