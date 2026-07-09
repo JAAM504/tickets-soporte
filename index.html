@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
+:root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
 @media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg2:#252523;--bg3:#2c2c29;--text:#e8e6df;--text2:#9a9891;--text3:#6b6a65;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--blue-bg:#0c447c;--blue-text:#B5D4F4;--amber-bg:#633806;--amber-text:#FAC775;--green-bg:#27500A;--green-text:#C0DD97;--gray-bg:#444441;--gray-text:#D3D1C7;--red-bg:#791F1F;--red-text:#F7C1C1;--purple-bg:#3B1A5F;--purple-text:#D8B4FE;}}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;min-height:100vh}
 .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -26,8 +26,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .field input,.field select,.field textarea{width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;font-family:inherit}
 .field textarea{resize:vertical;min-height:80px;line-height:1.5}
 .pass-wrap{position:relative}
-.pass-wrap input{padding-right:36px}
-.pass-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center;font-size:16px}
+.pass-wrap input{padding-right:36px!important}
+.pass-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:2px;display:flex;align-items:center;font-size:16px;z-index:2}
 .btn-full{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);height:36px;font-size:13px;cursor:pointer;font-weight:500;margin-top:.25rem}
 .btn-full:hover{opacity:.85}
 .btn-full:disabled{opacity:.5;cursor:not-allowed}
@@ -36,7 +36,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .login-msg.success{background:var(--green-bg);color:var(--green-text)}
 .app-wrap{display:none;flex-direction:column;min-height:100vh}
 .app-wrap.visible{display:flex}
-.topbar{background:#1a1a1a;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between}
+.topbar{background:#1a1a1a;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:.75rem}
 .topbar-divider{width:1px;height:28px;background:rgba(255,255,255,0.15)}
 .topbar-title{font-size:14px;font-weight:400;color:#fff;letter-spacing:.05em}
@@ -50,6 +50,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-topbar{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:0 10px;height:28px;font-size:12px;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px}
 .btn-topbar:hover{background:rgba(255,255,255,0.15)}
 .app{max-width:960px;margin:0 auto;padding:1.5rem 1rem;flex:1}
+.nav-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:1.5rem}
+.nav-tab{padding:8px 20px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--text);font-weight:500;border-bottom-color:var(--text)}
 .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
 .page-head h2{font-size:18px;font-weight:500}
 .page-head p{font-size:12px;color:var(--text3);margin-top:2px}
@@ -118,25 +122,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .section-label{font-size:12px;color:var(--text3);margin-bottom:6px}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;display:none;align-items:center;gap:8px;z-index:200;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast.show{display:flex}.toast.error{background:var(--red-bg);color:var(--red-text)}
-.nav-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:1.5rem}
-.nav-tab{padding:8px 20px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px}
-.nav-tab:hover{color:var(--text)}
-.nav-tab.active{color:var(--text);font-weight:500;border-bottom-color:var(--text)}
+/* Reports */
 .reports-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .chart-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
-.chart-card h3{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.875rem;text-transform:uppercase;letter-spacing:.04em}
-.chart-wrap{position:relative;height:220px}
+.chart-card h3{font-size:11px;font-weight:500;color:var(--text3);margin-bottom:.875rem;text-transform:uppercase;letter-spacing:.05em}
+.chart-wrap{position:relative;height:200px}
 .report-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
 .summary-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;text-align:center}
 .summary-val{font-size:28px;font-weight:500;margin-bottom:4px}
 .summary-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
 .btn-export{background:var(--green-bg);color:var(--green-text);border:.5px solid var(--green-text);border-radius:var(--radius);padding:0 16px;height:36px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px}
 .btn-export:hover{opacity:.85}
-.reports-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
-@media(max-width:600px){.reports-grid{grid-template-columns:1fr}.report-summary{grid-template-columns:1fr 1fr}}
-.footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em}
+.rf-select{font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none}
+.rf-input{font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none}
+.footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em;flex-shrink:0}
 .footer span{color:rgba(255,255,255,0.5)}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}.topbar-title{font-size:12px}}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}.topbar-title{font-size:12px}.reports-grid{grid-template-columns:1fr}.report-summary{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -198,84 +199,59 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="nav-tab" id="nav-reportes" onclick="showView('reportes')"><i class="ti ti-chart-bar" style="margin-right:5px"></i>Reportes</button>
       </div>
     </div>
+
+    <!-- SOLICITUDES -->
     <div id="view-solicitudes">
       <div class="page-head">
         <div><h2 id="page-title">Mis solicitudes</h2><p id="page-sub"></p></div>
         <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus"></i>Nueva solicitud</button>
       </div>
-    <div id="dept-tabs-wrap" style="display:none">
-      <div class="dept-tabs">
-        <button class="dept-tab active" id="tab-todos" onclick="setDeptFilter('todos')"><i class="ti ti-layout-grid" style="margin-right:4px"></i>Todos</button>
-        <button class="dept-tab" id="tab-TI" onclick="setDeptFilter('TI')"><i class="ti ti-device-desktop" style="margin-right:4px"></i>TI</button>
-        <button class="dept-tab" id="tab-Mantenimiento" onclick="setDeptFilter('Mantenimiento')"><i class="ti ti-tool" style="margin-right:4px"></i>Mantenimiento</button>
+      <div id="dept-tabs-wrap" style="display:none">
+        <div class="dept-tabs">
+          <button class="dept-tab active" id="tab-todos" onclick="setDeptFilter('todos')"><i class="ti ti-layout-grid" style="margin-right:4px"></i>Todos</button>
+          <button class="dept-tab" id="tab-TI" onclick="setDeptFilter('TI')"><i class="ti ti-device-desktop" style="margin-right:4px"></i>TI</button>
+          <button class="dept-tab" id="tab-Mantenimiento" onclick="setDeptFilter('Mantenimiento')"><i class="ti ti-tool" style="margin-right:4px"></i>Mantenimiento</button>
+        </div>
       </div>
+      <div id="stats-wrap" style="display:none">
+        <div class="stats">
+          <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="s-total">—</div></div>
+          <div class="stat"><div class="stat-label">Abiertos</div><div class="stat-val" id="s-open">—</div></div>
+          <div class="stat"><div class="stat-label">En proceso</div><div class="stat-val" id="s-proc">—</div></div>
+          <div class="stat"><div class="stat-label">Resueltos</div><div class="stat-val" id="s-done">—</div></div>
+        </div>
+        <div class="toolbar">
+          <input type="text" id="search" placeholder="Buscar solicitudes…" oninput="render()">
+          <select id="f-estado" onchange="render()"><option value="">Todos los estados</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select>
+          <select id="f-cat" onchange="render()"><option value="">Todas las categorías</option></select>
+          <select id="f-hotel" onchange="render()"><option value="">Todos los hoteles</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select>
+          <select id="f-prio" onchange="render()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select>
+        </div>
+      </div>
+      <div class="ticket-list" id="list"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
     </div>
-    <div id="stats-wrap" style="display:none">
-      <div class="stats">
-        <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="s-total">—</div></div>
-        <div class="stat"><div class="stat-label">Abiertos</div><div class="stat-val" id="s-open">—</div></div>
-        <div class="stat"><div class="stat-label">En proceso</div><div class="stat-val" id="s-proc">—</div></div>
-        <div class="stat"><div class="stat-label">Resueltos</div><div class="stat-val" id="s-done">—</div></div>
-      </div>
-      <div class="toolbar">
-        <input type="text" id="search" placeholder="Buscar solicitudes…" oninput="render()">
-        <select id="f-estado" onchange="render()"><option value="">Todos los estados</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select>
-        <select id="f-cat" onchange="render()"><option value="">Todas las categorías</option></select>
-        <select id="f-hotel" onchange="render()"><option value="">Todos los hoteles</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select>
-        <select id="f-prio" onchange="render()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select>
-      </div>
-    </div>
-    <div class="ticket-list" id="list" style="margin-top:.5rem"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
-  </div>
-    </div><!-- end view-solicitudes -->
 
+    <!-- REPORTES -->
     <div id="view-reportes" style="display:none">
-      <div class="reports-head">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
         <div><h2>Reportes</h2><p id="report-sub" style="font-size:12px;color:var(--text3);margin-top:2px"></p></div>
-        <button class="btn-export" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i>Exportar a Excel</button>
+        <button class="btn-export" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i>Exportar a Excel</button>
       </div>
-      <!-- Filtros de reporte -->
       <div style="background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:1rem">
         <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:.75rem"><i class="ti ti-filter" style="margin-right:4px"></i>Filtrar reporte</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Departamento</div>
-            <select id="rf-dept" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-              <option value="">Todos</option><option>TI</option><option>Mantenimiento</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hotel</div>
-            <select id="rf-hotel" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-              <option value="">Todos</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Estado</div>
-            <select id="rf-estado" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-              <option value="">Todos</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Prioridad</div>
-            <select id="rf-prio" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-              <option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Desde</div>
-            <input type="date" id="rf-desde" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hasta</div>
-            <input type="date" id="rf-hasta" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
-          </div>
-          <button onclick="applyReportFilter()" style="background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 12px;height:30px;font-size:12px;cursor:pointer;font-weight:500">Aplicar</button>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Departamento</div><select id="rf-dept" class="rf-select"><option value="">Todos</option><option>TI</option><option>Mantenimiento</option></select></div>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hotel</div><select id="rf-hotel" class="rf-select"><option value="">Todos</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select></div>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Estado</div><select id="rf-estado" class="rf-select"><option value="">Todos</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select></div>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Prioridad</div><select id="rf-prio" class="rf-select"><option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Desde</div><input type="date" id="rf-desde" class="rf-input"></div>
+          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hasta</div><input type="date" id="rf-hasta" class="rf-input"></div>
+          <button onclick="applyReportFilter()" style="background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:30px;font-size:12px;cursor:pointer;font-weight:500">Aplicar</button>
           <button onclick="clearReportFilter()" style="background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 12px;height:30px;font-size:12px;cursor:pointer;color:var(--text2)">Limpiar</button>
         </div>
       </div>
       <div class="report-summary">
-        <div class="summary-card"><div class="summary-val" id="r-total">—</div><div class="summary-label">Total tickets</div></div>
+        <div class="summary-card"><div class="summary-val" id="r-total">—</div><div class="summary-label">Total</div></div>
         <div class="summary-card"><div class="summary-val" style="color:var(--blue-text)" id="r-abierto">—</div><div class="summary-label">Abiertos</div></div>
         <div class="summary-card"><div class="summary-val" style="color:var(--amber-text)" id="r-proceso">—</div><div class="summary-label">En proceso</div></div>
         <div class="summary-card"><div class="summary-val" style="color:var(--green-text)" id="r-resuelto">—</div><div class="summary-label">Resueltos</div></div>
@@ -286,9 +262,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="chart-card"><h3>Por hotel</h3><div class="chart-wrap"><canvas id="chart-hotel"></canvas></div></div>
         <div class="chart-card"><h3>Por prioridad</h3><div class="chart-wrap"><canvas id="chart-prio"></canvas></div></div>
       </div>
-      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría (top categorías con tickets)</h3><div class="chart-wrap" style="height:280px"><canvas id="chart-cat"></canvas></div></div>
-    </div><!-- end view-reportes -->
-
+      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría</h3><div class="chart-wrap" style="height:260px"><canvas id="chart-cat"></canvas></div></div>
+    </div>
+  </div>
   <div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
 </div>
 
@@ -338,18 +314,16 @@ const CATS={
   TI:['Red','Hardware','Software','Accesos','Impresoras','UPS','Cámaras','Soporte SKILL'],
   Mantenimiento:['Pintura','Tabla yeso','Albañilería','Diseño','Tapiz/Alfombra','Carpintería','Aire acondicionado y Refrigeración','Electricidad y Torre','Compras','Tapicería','Taller de Soldadura','Fontanería','Ascensores']
 };
-
 const catIcon={Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer','UPS':'ti-battery-charging','Cámaras':'ti-camera','Soporte SKILL':'ti-school','Pintura':'ti-brush','Tabla yeso':'ti-wall','Albañilería':'ti-building-arch','Diseño':'ti-palette','Tapiz/Alfombra':'ti-layout-grid','Carpintería':'ti-hammer','Aire acondicionado y Refrigeración':'ti-wind','Electricidad y Torre':'ti-bolt','Compras':'ti-shopping-cart','Tapicería':'ti-armchair','Taller de Soldadura':'ti-flame','Fontanería':'ti-droplet','Ascensores':'ti-elevator'};
-
 const catColor={Red:'#185FA5',Hardware:'#185FA5',Software:'#185FA5',Accesos:'#185FA5',Impresoras:'#185FA5','UPS':'#185FA5','Cámaras':'#185FA5','Soporte SKILL':'#185FA5','Pintura':'#92700A','Tabla yeso':'#92700A','Albañilería':'#92700A','Diseño':'#92700A','Tapiz/Alfombra':'#92700A','Carpintería':'#7B4F2E','Aire acondicionado y Refrigeración':'#1A6B2A','Electricidad y Torre':'#CC5500','Compras':'#5A7A00','Tapicería':'#6B4FA8','Taller de Soldadura':'#555555','Fontanería':'#B71C1C','Ascensores':'#2E5FA8'};
-
 const catBg={Red:'#E6F1FB',Hardware:'#E6F1FB',Software:'#E6F1FB',Accesos:'#E6F1FB',Impresoras:'#E6F1FB','UPS':'#E6F1FB','Cámaras':'#E6F1FB','Soporte SKILL':'#E6F1FB','Pintura':'#FFF9C4','Tabla yeso':'#FFF9C4','Albañilería':'#FFF9C4','Diseño':'#FFF9C4','Tapiz/Alfombra':'#FFF9C4','Carpintería':'#F3E5D8','Aire acondicionado y Refrigeración':'#E8F5E9','Electricidad y Torre':'#FFF0E6','Compras':'#F4F9E4','Tapicería':'#F0EAF9','Taller de Soldadura':'#F0F0F0','Fontanería':'#FFEBEE','Ascensores':'#E8EEF9'};
-
 const statClass={Abierto:'b-abierto','En proceso':'b-en-proceso',Resuelto:'b-resuelto',Cerrado:'b-cerrado'};
 const prioClass={Alta:'prio-alta',Media:'prio-media',Baja:'prio-baja'};
 const prioIcon={Alta:'ti-arrow-up',Media:'ti-minus',Baja:'ti-arrow-down'};
 
 let allTickets=[],currentId=null,nextNum=1,currentUser=null,userRole=null,userDept=null,deptFilter='todos';
+let charts={};
+let reportFilters={dept:'',hotel:'',estado:'',prio:'',desde:'',hasta:''};
 
 function pad(n){return 'TK-'+String(n).padStart(3,'0')}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -424,8 +398,8 @@ async function initApp(user){
   else if(userRole==='admin'&&userDept==='TI'){badge.textContent='Admin TI';badge.className='role-badge role-admin-ti';badge.style.display='inline-flex';}
   else if(userRole==='admin'&&userDept==='Mantenimiento'){badge.textContent='Admin Mantenimiento';badge.className='role-badge role-admin-mant';badge.style.display='inline-flex';}
   else{badge.style.display='none';}
-  document.getElementById('dept-tabs-wrap').style.display=userRole==='superadmin'?'block':'none';
   document.getElementById('nav-tabs-wrap').style.display=isAdmin()?'block':'none';
+  document.getElementById('dept-tabs-wrap').style.display=userRole==='superadmin'?'block':'none';
   document.getElementById('stats-wrap').style.display=isAdmin()?'block':'none';
   if(userRole==='admin'&&userDept)deptFilter=userDept;
   document.getElementById('page-title').textContent=userRole==='superadmin'?'Todas las solicitudes':userRole==='admin'?'Solicitudes — '+userDept:'Mis solicitudes';
@@ -443,6 +417,14 @@ function setDeptFilter(dept){
   deptFilter=dept;
   ['todos','TI','Mantenimiento'].forEach(d=>{document.getElementById('tab-'+d).classList.toggle('active',d===dept);});
   updateFilterCats();render();
+}
+
+function showView(view){
+  document.getElementById('view-solicitudes').style.display=view==='solicitudes'?'block':'none';
+  document.getElementById('view-reportes').style.display=view==='reportes'?'block':'none';
+  document.getElementById('nav-solicitudes').classList.toggle('active',view==='solicitudes');
+  document.getElementById('nav-reportes').classList.toggle('active',view==='reportes');
+  if(view==='reportes')renderReports();
 }
 
 async function loadTickets(){
@@ -512,11 +494,8 @@ function updateCats(){
 function openNew(){updateCats();document.getElementById('modal-new').classList.add('open');}
 function closeNew(){
   document.getElementById('modal-new').classList.remove('open');
-  document.getElementById('n-title').value='';
-  document.getElementById('n-desc').value='';
-  document.getElementById('n-hotel').value='';
-  document.getElementById('btn-create').disabled=false;
-  document.getElementById('btn-create').textContent='Enviar solicitud';
+  document.getElementById('n-title').value='';document.getElementById('n-desc').value='';document.getElementById('n-hotel').value='';
+  document.getElementById('btn-create').disabled=false;document.getElementById('btn-create').textContent='Enviar solicitud';
 }
 
 async function createTicket(){
@@ -528,15 +507,7 @@ async function createTicket(){
   const nombre=currentUser.user_metadata?.full_name||currentUser.email;
   const codigo=pad(nextNum);
   const dept=document.getElementById('n-dept').value;
-  const{error}=await sb.from('tickets').insert([{
-    codigo,titulo,
-    descripcion:document.getElementById('n-desc').value.trim()||'Sin descripción adicional.',
-    categoria:document.getElementById('n-cat').value,
-    prioridad:document.getElementById('n-prio').value,
-    estado:'Abierto',solicitante:nombre,fecha:today(),
-    user_id:currentUser.id,user_email:currentUser.email,
-    departamento:dept,hotel:hotel
-  }]);
+  const{error}=await sb.from('tickets').insert([{codigo,titulo,descripcion:document.getElementById('n-desc').value.trim()||'Sin descripción adicional.',categoria:document.getElementById('n-cat').value,prioridad:document.getElementById('n-prio').value,estado:'Abierto',solicitante:nombre,fecha:today(),user_id:currentUser.id,user_email:currentUser.email,departamento:dept,hotel:hotel}]);
   if(error){showToast('Error: '+error.message,true);btn.disabled=false;btn.textContent='Enviar solicitud';return;}
   nextNum++;closeNew();await loadTickets();showToast('Solicitud '+codigo+' enviada correctamente');
 }
@@ -550,19 +521,14 @@ function openDet(id){
   const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
   document.getElementById('d-badges').innerHTML='<span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+catBadge(t.categoria)+'<span class="prio '+prioClass[t.prioridad]+'" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti '+prioIcon[t.prioridad]+'"></i>Prioridad '+t.prioridad+'</span>';
   document.getElementById('d-info').innerHTML='<div class="di"><div class="di-label">Solicitante</div><div class="di-val">'+(t.solicitante||'—')+'</div></div><div class="di"><div class="di-label">Correo</div><div class="di-val">'+(t.user_email||'—')+'</div></div><div class="di"><div class="di-label">Hotel</div><div class="di-val">'+(t.hotel||'—')+'</div></div><div class="di"><div class="di-label">Fecha</div><div class="di-val">'+fmt(t.fecha)+'</div></div>';
-  // Observacion
   if(isAdmin()){
     document.getElementById('obs-wrap').style.display='block';
     document.getElementById('obs-view').style.display='none';
     document.getElementById('obs-text').value=t.observacion||'';
-  } else {
+  }else{
     document.getElementById('obs-wrap').style.display='none';
-    if(t.observacion){
-      document.getElementById('obs-view').style.display='block';
-      document.getElementById('obs-content').textContent=t.observacion;
-    } else {
-      document.getElementById('obs-view').style.display='none';
-    }
+    if(t.observacion){document.getElementById('obs-view').style.display='block';document.getElementById('obs-content').textContent=t.observacion;}
+    else{document.getElementById('obs-view').style.display='none';}
   }
   document.getElementById('admin-actions').style.display=isAdmin()?'block':'none';
   document.getElementById('btn-delete').style.display=isAdmin()?'inline-flex':'none';
@@ -584,11 +550,7 @@ async function setStatus(est){
   if(est==='Resuelto'){
     const t=allTickets.find(x=>x.id===currentId);
     if(t&&t.user_email){
-      fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM'},
-        body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email})
-      }).catch(()=>{});
+      fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM'},body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email})}).catch(()=>{});
     }
   }
   closeDet();await loadTickets();showToast('Estado actualizado a: '+est);
@@ -609,103 +571,82 @@ async function deleteTicket(){
   closeDet();await loadTickets();showToast('Solicitud '+codigo+' eliminada');
 }
 
-let charts={};
-let reportFilters={dept:'',hotel:'',estado:'',prio:'',fechaDesde:'',fechaHasta:''};
-
-function showView(view){
-  document.getElementById('view-solicitudes').style.display=view==='solicitudes'?'block':'none';
-  document.getElementById('view-reportes').style.display=view==='reportes'?'block':'none';
-  document.getElementById('nav-solicitudes').classList.toggle('active',view==='solicitudes');
-  document.getElementById('nav-reportes').classList.toggle('active',view==='reportes');
-  if(view==='reportes') renderReports();
-}
-
+// REPORTES
 function getReportTickets(){
   return allTickets.filter(t=>{
     if(reportFilters.dept&&t.departamento!==reportFilters.dept)return false;
     if(reportFilters.hotel&&t.hotel!==reportFilters.hotel)return false;
     if(reportFilters.estado&&t.estado!==reportFilters.estado)return false;
     if(reportFilters.prio&&t.prioridad!==reportFilters.prio)return false;
-    if(reportFilters.fechaDesde&&t.fecha<reportFilters.fechaDesde)return false;
-    if(reportFilters.fechaHasta&&t.fecha>reportFilters.fechaHasta)return false;
+    if(reportFilters.desde&&t.fecha<reportFilters.desde)return false;
+    if(reportFilters.hasta&&t.fecha>reportFilters.hasta)return false;
     return true;
   });
 }
 
 function applyReportFilter(){
-  reportFilters.dept=document.getElementById('rf-dept').value;
-  reportFilters.hotel=document.getElementById('rf-hotel').value;
-  reportFilters.estado=document.getElementById('rf-estado').value;
-  reportFilters.prio=document.getElementById('rf-prio').value;
-  reportFilters.fechaDesde=document.getElementById('rf-desde').value;
-  reportFilters.fechaHasta=document.getElementById('rf-hasta').value;
+  reportFilters={
+    dept:document.getElementById('rf-dept').value,
+    hotel:document.getElementById('rf-hotel').value,
+    estado:document.getElementById('rf-estado').value,
+    prio:document.getElementById('rf-prio').value,
+    desde:document.getElementById('rf-desde').value,
+    hasta:document.getElementById('rf-hasta').value
+  };
   renderReports();
 }
 
 function clearReportFilter(){
-  ['rf-dept','rf-hotel','rf-estado','rf-prio'].forEach(id=>document.getElementById(id).value='');
-  ['rf-desde','rf-hasta'].forEach(id=>document.getElementById(id).value='');
-  reportFilters={dept:'',hotel:'',estado:'',prio:'',fechaDesde:'',fechaHasta:''};
+  ['rf-dept','rf-hotel','rf-estado','rf-prio','rf-desde','rf-hasta'].forEach(id=>document.getElementById(id).value='');
+  reportFilters={dept:'',hotel:'',estado:'',prio:'',desde:'',hasta:''};
   renderReports();
+}
+
+function makeChart(id,type,labels,data,colors,bgColors){
+  if(charts[id]){charts[id].destroy();delete charts[id];}
+  const canvas=document.getElementById(id);
+  if(!canvas)return;
+  charts[id]=new Chart(canvas.getContext('2d'),{
+    type,
+    data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:type==='doughnut'?'transparent':colors,borderWidth:0,borderRadius:type==='bar'?4:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:10},boxWidth:10,padding:8}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:9}},grid:{display:false}}}:{}}
+  });
 }
 
 function renderReports(){
   const tickets=getReportTickets();
-  const now=new Date();
-  document.getElementById('report-sub').textContent='Actualizado '+now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'})+' · '+tickets.length+' tickets';
+  document.getElementById('report-sub').textContent=tickets.length+' tickets · Actualizado '+new Date().toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('r-total').textContent=tickets.length;
   document.getElementById('r-abierto').textContent=tickets.filter(t=>t.estado==='Abierto').length;
   document.getElementById('r-proceso').textContent=tickets.filter(t=>t.estado==='En proceso').length;
   document.getElementById('r-resuelto').textContent=tickets.filter(t=>t.estado==='Resuelto').length;
-
-  const count=(key,vals)=>vals.map(v=>tickets.filter(t=>t[key]===v).length);
-  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00','#CC5500','#1A6B2A','#7B4F2E','#92700A','#555555'];
-  const LIGHT=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4','#FFF0E6','#E8F5E9','#F3E5D8','#FFF9C4','#F0F0F0'];
-
-  function makeChart(id,type,labels,data,colors,bgColors){
-    if(charts[id]){charts[id].destroy();delete charts[id];}
-    const canvas=document.getElementById(id);
-    if(!canvas)return;
-    const ctx=canvas.getContext('2d');
-    charts[id]=new Chart(ctx,{
-      type,
-      data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:type==='doughnut'?bgColors||colors:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?4:0}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:10},boxWidth:10,padding:8}}},
-        scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:10}},grid:{display:false}}}:{}}
-    });
-  }
-
-  makeChart('chart-estado','doughnut',['Abierto','En proceso','Resuelto','Cerrado'],count('estado',['Abierto','En proceso','Resuelto','Cerrado']),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
-  makeChart('chart-dept','doughnut',['TI','Mantenimiento'],count('departamento',['TI','Mantenimiento']),['#185FA5','#6B21A8'],['#E6F1FB','#F0EAFB']);
+  const cnt=(key,vals)=>vals.map(v=>tickets.filter(t=>t[key]===v).length);
+  makeChart('chart-estado','doughnut',['Abierto','En proceso','Resuelto','Cerrado'],cnt('estado',['Abierto','En proceso','Resuelto','Cerrado']),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
+  makeChart('chart-dept','doughnut',['TI','Mantenimiento'],cnt('departamento',['TI','Mantenimiento']),['#185FA5','#6B21A8'],['#E6F1FB','#F0EAFB']);
   const hoteles=['Hotel Plaza Juan Carlos','Hotel Plaza San Martín','Hotel Plaza del Libertador','Hotel Plaza del General'];
-  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),count('hotel',hoteles),COLORS,LIGHT);
-  makeChart('chart-prio','doughnut',['Alta','Media','Baja'],count('prioridad',['Alta','Media','Baja']),['#A32D2D','#854F0B','#3B6D11'],['#FCEBEB','#FAEEDA','#EAF3DE']);
+  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),cnt('hotel',hoteles),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
+  makeChart('chart-prio','doughnut',['Alta','Media','Baja'],cnt('prioridad',['Alta','Media','Baja']),['#A32D2D','#854F0B','#3B6D11'],['#FCEBEB','#FAEEDA','#EAF3DE']);
   const allCats=[...CATS.TI,...CATS.Mantenimiento];
-  const nonZero=allCats.map((c,i)=>({c,n:tickets.filter(t=>t.categoria===c).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
-  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS,LIGHT);
+  const nonZero=allCats.map(c=>({c,n:tickets.filter(t=>t.categoria===c).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
+  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00','#CC5500','#1A6B2A','#7B4F2E','#92700A','#555555','#B71C1C','#2E5FA8'];
+  const BGSQ=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4','#FFF0E6','#E8F5E9','#F3E5D8','#FFF9C4','#F0F0F0','#FFEBEE','#E8EEF9'];
+  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS,BGSQ);
 }
 
-function exportExcel(){
-  try{
-    const tickets=getReportTickets();
-    if(!tickets.length){showToast('No hay tickets para exportar',true);return;}
-    const headers=['Código','Título','Descripción','Departamento','Hotel','Categoría','Estado','Prioridad','Solicitante','Correo','Fecha','Observación'];
-    const rows=tickets.map(t=>[t.codigo,t.titulo,t.descripcion,t.departamento,t.hotel,t.categoria,t.estado,t.prioridad,t.solicitante,t.user_email,t.fecha,t.observacion]);
-    const esc=v=>'"'+(String(v||'').replace(/"/g,'""'))+'"';
-    const csv='﻿'+[headers,...rows].map(r=>r.map(esc).join(',')).join('
-');
-    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download='Reporte_Tickets_'+new Date().toISOString().slice(0,10)+'.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Reporte exportado — '+tickets.length+' tickets');
-  }catch(e){showToast('Error al exportar: '+e.message,true);}
+function exportCSV(){
+  const tickets=getReportTickets();
+  if(!tickets.length){showToast('No hay tickets para exportar',true);return;}
+  const headers=['Código','Título','Descripción','Departamento','Hotel','Categoría','Estado','Prioridad','Solicitante','Correo','Fecha','Observación'];
+  const rows=tickets.map(t=>[t.codigo,t.titulo,t.descripcion,t.departamento,t.hotel,t.categoria,t.estado,t.prioridad,t.solicitante,t.user_email,t.fecha,t.observacion]);
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const csv='\uFEFF'+[headers,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='Reporte_Tickets_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  showToast('Exportado — '+tickets.length+' tickets');
 }
 
 function showToast(msg,isError=false){
