@@ -8,18 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;
-  --text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;
-  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
-  --radius:8px;--radius-lg:12px;
-  --blue-bg:#E6F1FB;--blue-text:#185FA5;
-  --amber-bg:#FAEEDA;--amber-text:#854F0B;
-  --green-bg:#EAF3DE;--green-text:#3B6D11;
-  --gray-bg:#F1EFE8;--gray-text:#5F5E5A;
-  --red-bg:#FCEBEB;--red-text:#A32D2D;
-  --purple-bg:#F0EAFB;--purple-text:#6B21A8;
-}
+:root{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
 @media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg2:#252523;--bg3:#2c2c29;--text:#e8e6df;--text2:#9a9891;--text3:#6b6a65;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--blue-bg:#0c447c;--blue-text:#B5D4F4;--amber-bg:#633806;--amber-text:#FAC775;--green-bg:#27500A;--green-text:#C0DD97;--gray-bg:#444441;--gray-text:#D3D1C7;--red-bg:#791F1F;--red-text:#F7C1C1;--purple-bg:#3B1A5F;--purple-text:#D8B4FE;}}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;min-height:100vh}
 .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -28,14 +17,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .login-header h1{font-size:16px;font-weight:400;color:#fff;letter-spacing:.08em;text-transform:uppercase}
 .login-header p{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px}
 .login-body{padding:1.5rem}
-.login-tabs{display:flex;gap:0;margin-bottom:1.25rem;border:.5px solid var(--border2);border-radius:var(--radius);overflow:hidden}
+.login-tabs{display:flex;margin-bottom:1.25rem;border:.5px solid var(--border2);border-radius:var(--radius);overflow:hidden}
 .login-tab{flex:1;padding:7px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2)}
 .login-tab.active{background:var(--text);color:var(--bg);font-weight:500}
 .field{margin-bottom:.875rem}
 .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
-.field input,.field select{width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none}
-.field input:focus,.field select:focus{border-color:var(--text2)}
-.btn-full{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0;height:36px;font-size:13px;cursor:pointer;font-weight:500;margin-top:.25rem}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;font-family:inherit}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.pass-wrap{position:relative}
+.pass-wrap input{padding-right:36px}
+.pass-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center;font-size:16px}
+.btn-full{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);height:36px;font-size:13px;cursor:pointer;font-weight:500;margin-top:.25rem}
 .btn-full:hover{opacity:.85}
 .btn-full:disabled{opacity:.5;cursor:not-allowed}
 .login-msg{font-size:12px;text-align:center;margin-top:.75rem;padding:.5rem;border-radius:var(--radius)}
@@ -79,7 +71,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ticket-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
 .ticket-title{font-size:14px;font-weight:500}
 .ticket-id{font-size:11px;color:var(--text3);white-space:nowrap}
-.ticket-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.ticket-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px}
 .badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
 .b-abierto{background:var(--blue-bg);color:var(--blue-text)}
 .b-en-proceso{background:var(--amber-bg);color:var(--amber-text)}
@@ -121,12 +113,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .status-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:.5px solid var(--border2);cursor:pointer;background:var(--bg2);color:var(--text2)}
 .status-btn:hover{background:var(--bg3)}
 .status-btn.active{font-weight:500;border-color:var(--text);color:var(--text)}
-.disabled-btn{opacity:.35;cursor:not-allowed!important;border-style:dashed}
+.status-btn:disabled{opacity:.35;cursor:not-allowed;border-style:dashed}
 .section-label{font-size:12px;color:var(--text3);margin-bottom:6px}
-.footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em}
-.footer span{color:rgba(255,255,255,0.5)}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;display:none;align-items:center;gap:8px;z-index:200;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast.show{display:flex}.toast.error{background:var(--red-bg);color:var(--red-text)}
+.footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em}
+.footer span{color:rgba(255,255,255,0.5)}
 @media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}.topbar-title{font-size:12px}}
 </style>
 </head>
@@ -145,13 +137,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div id="form-login">
         <div class="field"><label>Correo electrónico</label><input id="l-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('l-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i id="l-pass-eye" class="ti ti-eye" style="font-size:16px"></i></button></div></div>
+        <div class="field"><label>Contraseña</label>
+          <div class="pass-wrap">
+            <input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+            <button class="pass-eye" type="button" onclick="togglePass('l-pass','l-eye')"><i id="l-eye" class="ti ti-eye"></i></button>
+          </div>
+        </div>
         <button class="btn-full" id="btn-login" onclick="doLogin()">Iniciar sesión</button>
       </div>
       <div id="form-register" style="display:none">
         <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Tu nombre"></div>
         <div class="field"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label><div style="position:relative"><input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doRegister()" style="width:100%;font-size:13px;padding:8px 36px 8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none"><button type="button" onclick="togglePass('r-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:0;display:flex;align-items:center"><i id="r-pass-eye" class="ti ti-eye" style="font-size:16px"></i></button></div></div>
+        <div class="field"><label>Contraseña</label>
+          <div class="pass-wrap">
+            <input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doRegister()">
+            <button class="pass-eye" type="button" onclick="togglePass('r-pass','r-eye')"><i id="r-eye" class="ti ti-eye"></i></button>
+          </div>
+        </div>
         <button class="btn-full" id="btn-register" onclick="doRegister()">Crear cuenta</button>
       </div>
       <div id="login-msg" class="login-msg" style="display:none"></div>
@@ -164,7 +166,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="topbar-left">
       <div class="topbar-title">DISTRITO HOTELERO — SOLICITUDES</div>
       <div class="topbar-divider"></div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4)" id="topbar-sub">Plaza San Martín</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4)">Plaza San Martín</div>
     </div>
     <div class="topbar-right">
       <span id="topbar-role-badge" class="role-badge" style="display:none"></span>
@@ -172,14 +174,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="btn-topbar" onclick="doLogout()"><i class="ti ti-logout"></i>Salir</button>
     </div>
   </div>
-
   <div class="app">
     <div class="page-head">
       <div><h2 id="page-title">Mis solicitudes</h2><p id="page-sub"></p></div>
       <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus"></i>Nueva solicitud</button>
     </div>
-
-    <!-- Tabs de departamento (solo admin/superadmin) -->
     <div id="dept-tabs-wrap" style="display:none">
       <div class="dept-tabs">
         <button class="dept-tab active" id="tab-todos" onclick="setDeptFilter('todos')"><i class="ti ti-layout-grid" style="margin-right:4px"></i>Todos</button>
@@ -187,7 +186,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="dept-tab" id="tab-Mantenimiento" onclick="setDeptFilter('Mantenimiento')"><i class="ti ti-tool" style="margin-right:4px"></i>Mantenimiento</button>
       </div>
     </div>
-
     <div id="stats-wrap" style="display:none">
       <div class="stats">
         <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="s-total">—</div></div>
@@ -203,26 +201,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <select id="f-prio" onchange="render()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select>
       </div>
     </div>
-
-    <div class="ticket-list" id="list"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
+    <div class="ticket-list" id="list" style="margin-top:.5rem"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
   </div>
+  <div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
 </div>
 
 <div class="toast" id="toast"><i class="ti ti-check" id="toast-icon"></i><span id="toast-msg"></span></div>
 
-<!-- Modal nueva solicitud -->
 <div class="modal-wrap" id="modal-new">
   <div class="modal">
     <div class="modal-head"><h2><i class="ti ti-plus" style="margin-right:5px"></i>Nueva solicitud</h2><button class="close-btn" onclick="closeNew()">×</button></div>
-    <div class="field"><label>Departamento *</label>
-      <select id="n-dept" onchange="updateCats()">
-        <option value="TI">TI — Soporte Tecnológico</option>
-        <option value="Mantenimiento">Mantenimiento</option>
-      </select>
-    </div>
+    <div class="field"><label>Departamento *</label><select id="n-dept" onchange="updateCats()"><option value="TI">TI — Soporte Tecnológico</option><option value="Mantenimiento">Mantenimiento</option></select></div>
     <div class="field"><label>Hotel *</label><select id="n-hotel"><option value="">Selecciona el hotel</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select></div>
     <div class="field"><label>Título *</label><input id="n-title" type="text" placeholder="Describe el problema brevemente"></div>
-    <div class="field"><label>Descripción</label><textarea id="n-desc" style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:80px;font-family:inherit;line-height:1.5" placeholder="Detalla el problema, ubicación, equipo afectado…"></textarea></div>
+    <div class="field"><label>Descripción</label><textarea id="n-desc" placeholder="Detalla el problema, ubicación, equipo afectado…"></textarea></div>
     <div class="row2">
       <div class="field"><label>Categoría</label><select id="n-cat"></select></div>
       <div class="field"><label>Prioridad</label><select id="n-prio"><option>Media</option><option>Alta</option><option>Baja</option></select></div>
@@ -231,22 +223,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- Modal detalle -->
 <div class="modal-wrap" id="modal-det">
   <div class="modal">
     <div class="modal-head"><div><div style="font-size:11px;color:var(--text3)" id="d-id"></div><h2 id="d-title" style="font-size:15px;margin-top:2px"></h2></div><button class="close-btn" onclick="closeDet()">×</button></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.875rem" id="d-badges"></div>
     <div class="detail-body" id="d-body"></div>
     <div class="detail-grid" id="d-info"></div>
-      <div class="field" id="obs-wrap">
-        <label style="font-size:12px;color:var(--text3);margin-bottom:6px;display:block">Observación</label>
-        <textarea id="obs-text" style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:72px;font-family:inherit;line-height:1.5" placeholder="Agregar observación..."></textarea>
-        <button id="obs-btn" style="margin-top:6px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:32px;font-size:12px;cursor:pointer;font-weight:500" onclick="saveObs()">Guardar observación</button>
-      </div>
-      <div id="obs-view" style="display:none;margin-bottom:1rem">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Observación</div>
-        <div id="obs-content" style="font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius)"></div>
-      </div>
+    <div id="obs-wrap" style="display:none;margin-bottom:1rem">
+      <div class="section-label">Observación</div>
+      <textarea id="obs-text" placeholder="Agregar observación..." style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:72px;font-family:inherit;line-height:1.5"></textarea>
+      <button onclick="saveObs()" style="margin-top:6px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:32px;font-size:12px;cursor:pointer;font-weight:500">Guardar observación</button>
+    </div>
+    <div id="obs-view" style="display:none;margin-bottom:1rem">
+      <div class="section-label">Observación del técnico</div>
+      <div id="obs-content" style="font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius)"></div>
+    </div>
     <div id="admin-actions" style="display:none"><div class="section-label">Cambiar estado</div><div class="status-row" id="d-status"></div></div>
     <div class="modal-btns"><button class="btn-danger" id="btn-delete" style="display:none" onclick="deleteTicket()"><i class="ti ti-trash" style="margin-right:3px"></i>Eliminar</button><button class="btn-cancel" onclick="closeDet()">Cerrar</button></div>
   </div>
@@ -261,15 +252,18 @@ const CATS={
   TI:['Red','Hardware','Software','Accesos','Impresoras','UPS','Cámaras'],
   Mantenimiento:['Pintura','Tabla yeso','Albañilería','Diseño','Tapiz/Alfombra','Carpintería','Aire acondicionado y Refrigeración','Electricidad y Torre','Compras','Tapicería','Taller de Soldadura','Fontanería','Ascensores']
 };
-const catIcon={Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer','UPS':'ti-battery-charging','Cámaras':'ti-camera','Pintura':'ti-brush','Tabla yeso':'ti-wall','Albañilería':'ti-building','Diseño':'ti-palette','Tapiz/Alfombra':'ti-layout-grid','Carpintería':'ti-hammer','Aire acondicionado y Refrigeración':'ti-wind','Electricidad y Torre':'ti-bolt','Compras':'ti-shopping-cart','Tapicería':'ti-armchair','Taller de Soldadura':'ti-flame','Fontanería':'ti-droplet','Ascensores':'ti-building'};
+
+const catIcon={Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer','UPS':'ti-battery-charging','Cámaras':'ti-camera','Pintura':'ti-brush','Tabla yeso':'ti-wall','Albañilería':'ti-building-arch','Diseño':'ti-palette','Tapiz/Alfombra':'ti-layout-grid','Carpintería':'ti-hammer','Aire acondicionado y Refrigeración':'ti-wind','Electricidad y Torre':'ti-bolt','Compras':'ti-shopping-cart','Tapicería':'ti-armchair','Taller de Soldadura':'ti-flame','Fontanería':'ti-droplet','Ascensores':'ti-elevator'};
+
+const catColor={Red:'#185FA5',Hardware:'#185FA5',Software:'#185FA5',Accesos:'#185FA5',Impresoras:'#185FA5','UPS':'#185FA5','Cámaras':'#185FA5','Pintura':'#92700A','Tabla yeso':'#92700A','Albañilería':'#92700A','Diseño':'#92700A','Tapiz/Alfombra':'#92700A','Carpintería':'#7B4F2E','Aire acondicionado y Refrigeración':'#1A6B2A','Electricidad y Torre':'#CC5500','Compras':'#5A7A00','Tapicería':'#6B4FA8','Taller de Soldadura':'#555555','Fontanería':'#B71C1C','Ascensores':'#2E5FA8'};
+
+const catBg={Red:'#E6F1FB',Hardware:'#E6F1FB',Software:'#E6F1FB',Accesos:'#E6F1FB',Impresoras:'#E6F1FB','UPS':'#E6F1FB','Cámaras':'#E6F1FB','Pintura':'#FFF9C4','Tabla yeso':'#FFF9C4','Albañilería':'#FFF9C4','Diseño':'#FFF9C4','Tapiz/Alfombra':'#FFF9C4','Carpintería':'#F3E5D8','Aire acondicionado y Refrigeración':'#E8F5E9','Electricidad y Torre':'#FFF0E6','Compras':'#F4F9E4','Tapicería':'#F0EAF9','Taller de Soldadura':'#F0F0F0','Fontanería':'#FFEBEE','Ascensores':'#E8EEF9'};
+
 const statClass={Abierto:'b-abierto','En proceso':'b-en-proceso',Resuelto:'b-resuelto',Cerrado:'b-cerrado'};
-const catColor={'Red':'#185FA5','Hardware':'#185FA5','Software':'#185FA5','Accesos':'#185FA5','Impresoras':'#185FA5','UPS':'#185FA5','Cámaras':'#185FA5','Pintura':'#92700A','Tabla yeso':'#92700A','Albañilería':'#92700A','Diseño':'#92700A','Tapiz/Alfombra':'#92700A','Carpintería':'#7B4F2E','Aire acondicionado y Refrigeración':'#1A6B2A','Electricidad y Torre':'#CC5500','Compras':'#5A7A00','Tapicería':'#6B4FA8','Taller de Soldadura':'#555555','Fontanería':'#B71C1C','Ascensores':'#2E5FA8'};
-const catBg={'Red':'#E6F1FB','Hardware':'#E6F1FB','Software':'#E6F1FB','Accesos':'#E6F1FB','Impresoras':'#E6F1FB','UPS':'#E6F1FB','Cámaras':'#E6F1FB','Pintura':'#FFF9C4','Tabla yeso':'#FFF9C4','Albañilería':'#FFF9C4','Diseño':'#FFF9C4','Tapiz/Alfombra':'#FFF9C4','Carpintería':'#F3E5D8','Aire acondicionado y Refrigeración':'#E8F5E9','Electricidad y Torre':'#FFF0E6','Compras':'#F4F9E4','Tapicería':'#F0EAF9','Taller de Soldadura':'#F0F0F0','Fontanería':'#FFEBEE','Ascensores':'#E8EEF9'};
 const prioClass={Alta:'prio-alta',Media:'prio-media',Baja:'prio-baja'};
 const prioIcon={Alta:'ti-arrow-up',Media:'ti-minus',Baja:'ti-arrow-down'};
 
-let allTickets=[],currentId=null,nextNum=1,currentUser=null;
-let userRole=null,userDept=null,deptFilter='todos';
+let allTickets=[],currentId=null,nextNum=1,currentUser=null,userRole=null,userDept=null,deptFilter='todos';
 
 function pad(n){return 'TK-'+String(n).padStart(3,'0')}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -277,16 +271,11 @@ function fmt(d){if(!d)return '—';const[y,m,dy]=d.split('-');return dy+'/'+m+'/
 function initials(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
 function isAdmin(){return userRole==='superadmin'||userRole==='admin'}
 
-function togglePass(inputId){
-  const input = document.getElementById(inputId);
-  const icon = document.getElementById(inputId+'-eye');
-  if(input.type==='password'){
-    input.type='text';
-    icon.className='ti ti-eye-off';
-  } else {
-    input.type='password';
-    icon.className='ti ti-eye';
-  }
+function togglePass(inputId,eyeId){
+  const input=document.getElementById(inputId);
+  const eye=document.getElementById(eyeId);
+  if(input.type==='password'){input.type='text';eye.className='ti ti-eye-off';}
+  else{input.type='password';eye.className='ti ti-eye';}
 }
 
 function switchTab(t){
@@ -296,7 +285,11 @@ function switchTab(t){
   document.getElementById('form-register').style.display=t==='register'?'block':'none';
   document.getElementById('login-msg').style.display='none';
 }
-function showMsg(msg,isError=true){const el=document.getElementById('login-msg');el.textContent=msg;el.className='login-msg '+(isError?'error':'success');el.style.display='block';}
+
+function showMsg(msg,isError=true){
+  const el=document.getElementById('login-msg');
+  el.textContent=msg;el.className='login-msg '+(isError?'error':'success');el.style.display='block';
+}
 
 async function doLogin(){
   const email=document.getElementById('l-email').value.trim();
@@ -332,58 +325,43 @@ async function doLogout(){
 
 async function initApp(user){
   currentUser=user;
-  // Check admin role
   const{data:adminData}=await sb.from('admins').select('rol,departamento').eq('email',user.email).single();
   userRole=adminData?.rol||'user';
   userDept=adminData?.departamento||null;
-
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-wrap').classList.add('visible');
   const name=user.user_metadata?.full_name||user.email;
   document.getElementById('topbar-name').textContent=name;
   document.getElementById('topbar-avatar').textContent=initials(name);
-
-  // Role badge
   const badge=document.getElementById('topbar-role-badge');
   if(userRole==='superadmin'){badge.textContent='Super Admin';badge.className='role-badge role-superadmin';badge.style.display='inline-flex';}
   else if(userRole==='admin'&&userDept==='TI'){badge.textContent='Admin TI';badge.className='role-badge role-admin-ti';badge.style.display='inline-flex';}
   else if(userRole==='admin'&&userDept==='Mantenimiento'){badge.textContent='Admin Mantenimiento';badge.className='role-badge role-admin-mant';badge.style.display='inline-flex';}
   else{badge.style.display='none';}
-
-  // Show dept tabs only for superadmin
   document.getElementById('dept-tabs-wrap').style.display=userRole==='superadmin'?'block':'none';
   document.getElementById('stats-wrap').style.display=isAdmin()?'block':'none';
-
-  // Set default dept filter for dept admin
-  if(userRole==='admin'&&userDept) deptFilter=userDept;
-
-  // Page title
+  if(userRole==='admin'&&userDept)deptFilter=userDept;
   document.getElementById('page-title').textContent=userRole==='superadmin'?'Todas las solicitudes':userRole==='admin'?'Solicitudes — '+userDept:'Mis solicitudes';
-
-  // Update category filter options
   updateFilterCats();
   await loadTickets();
 }
 
 function updateFilterCats(){
   const sel=document.getElementById('f-cat');
-  const cats=deptFilter==='todos'?[...CATS.TI,...CATS.Mantenimiento].filter((v,i,a)=>a.indexOf(v)===i):CATS[deptFilter]||[...CATS.TI,...CATS.Mantenimiento];
+  const cats=deptFilter==='todos'?[...CATS.TI,...CATS.Mantenimiento]:CATS[deptFilter]||[];
   sel.innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>'<option>'+c+'</option>').join('');
 }
 
 function setDeptFilter(dept){
   deptFilter=dept;
-  ['todos','TI','Mantenimiento'].forEach(d=>{
-    document.getElementById('tab-'+d).classList.toggle('active',d===dept);
-  });
-  updateFilterCats();
-  render();
+  ['todos','TI','Mantenimiento'].forEach(d=>{document.getElementById('tab-'+d).classList.toggle('active',d===dept);});
+  updateFilterCats();render();
 }
 
 async function loadTickets(){
   let query=sb.from('tickets').select('*').order('id',{ascending:false});
-  if(!isAdmin()) query=query.eq('user_id',currentUser.id);
-  else if(userRole==='admin'&&userDept) query=query.eq('departamento',userDept);
+  if(!isAdmin())query=query.eq('user_id',currentUser.id);
+  else if(userRole==='admin'&&userDept)query=query.eq('departamento',userDept);
   const{data,error}=await query;
   if(error){showToast('Error: '+error.message,true);return;}
   allTickets=data||[];
@@ -394,25 +372,28 @@ async function loadTickets(){
 }
 
 function getFiltered(){
-  if(!isAdmin()) return allTickets;
+  if(!isAdmin())return allTickets;
   const q=document.getElementById('search').value.toLowerCase();
   const est=document.getElementById('f-estado').value;
   const cat=document.getElementById('f-cat').value;
+  const hotel=document.getElementById('f-hotel').value;
   const prio=document.getElementById('f-prio').value;
   return allTickets.filter(t=>{
     if(deptFilter!=='todos'&&t.departamento!==deptFilter)return false;
     if(q&&!t.titulo.toLowerCase().includes(q)&&!(t.descripcion||'').toLowerCase().includes(q))return false;
     if(est&&t.estado!==est)return false;
     if(cat&&t.categoria!==cat)return false;
-    const hotel=document.getElementById('f-hotel')?document.getElementById('f-hotel').value:'';
     if(hotel&&t.hotel!==hotel)return false;
     if(prio&&t.prioridad!==prio)return false;
     return true;
   });
 }
 
+function catBadge(cat){
+  return '<span class="badge" style="background:'+(catBg[cat]||'#f0efe9')+';color:'+(catColor[cat]||'#6b6a65')+'"><i class="ti '+(catIcon[cat]||'ti-help-circle')+'" style="margin-right:3px"></i>'+cat+'</span>';
+}
+
 function render(){
-  const filtered=getFiltered();
   if(isAdmin()){
     const src=deptFilter==='todos'?allTickets:allTickets.filter(t=>t.departamento===deptFilter);
     document.getElementById('s-total').textContent=src.length;
@@ -420,27 +401,41 @@ function render(){
     document.getElementById('s-proc').textContent=src.filter(t=>t.estado==='En proceso').length;
     document.getElementById('s-done').textContent=src.filter(t=>t.estado==='Resuelto').length;
   }
+  const list=getFiltered();
   const el=document.getElementById('list');
-  if(!filtered.length){el.innerHTML='<div class="empty"><i class="ti ti-ticket-off"></i>No hay solicitudes que mostrar.<br><br><button onclick="openNew()" style="margin-top:8px;background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px">Crear primera solicitud</button></div>';return;}
-  el.innerHTML=filtered.map(t=>{
+  if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-ticket-off"></i>No hay solicitudes que mostrar.<br><br><button onclick="openNew()" style="margin-top:8px;background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px">Crear primera solicitud</button></div>';return;}
+  el.innerHTML=list.map(t=>{
     const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
-    return '<div class="ticket" onclick="openDet('+t.id+')" role="button" tabindex="0"><div class="ticket-top"><div class="ticket-title">'+t.titulo+'</div><div class="ticket-id">'+t.codigo+'</div></div><div class="ticket-meta"><span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+'<span class="badge" style="background:'+(catBg[t.categoria]||'#f0efe9')+';color:'+(catColor[t.categoria]||'#6b6a65')+'"><i class="ti '+(catIcon[t.categoria]||'ti-help-circle')+' " style="margin-right:3px"></i>'+t.categoria+'</span></div><div class="ticket-desc">'+(t.descripcion||'')+'</div><div class="ticket-foot"><div class="user-info-row"><span class="avatar">'+initials(t.solicitante)+'</span>'+(t.solicitante||'—')+'</div><div style="display:flex;align-items:center;gap:10px"><span class="prio '+prioClass[t.prioridad]+'"><i class="ti '+prioIcon[t.prioridad]+'"></i>'+t.prioridad+'</span><span class="date">'+fmt(t.fecha)+'</span></div></div></div>';
+    return '<div class="ticket" onclick="openDet('+t.id+')" role="button" tabindex="0">'
+      +'<div class="ticket-top"><div class="ticket-title">'+t.titulo+'</div><div class="ticket-id">'+t.codigo+'</div></div>'
+      +'<div class="ticket-meta"><span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+catBadge(t.categoria)
+      +'<span class="cat-tag"><i class="ti ti-building" style="margin-right:3px"></i>'+(t.hotel||'—')+'</span></div>'
+      +'<div class="ticket-desc">'+(t.descripcion||'')+'</div>'
+      +'<div class="ticket-foot"><div class="user-info-row"><span class="avatar">'+initials(t.solicitante)+'</span>'+(t.solicitante||'—')+'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px"><span class="prio '+prioClass[t.prioridad]+'"><i class="ti '+prioIcon[t.prioridad]+'"></i>'+t.prioridad+'</span><span class="date">'+fmt(t.fecha)+'</span></div></div>'
+      +'</div>';
   }).join('');
 }
 
 function updateCats(){
   const dept=document.getElementById('n-dept').value;
-  const cats=CATS[dept]||[];
-  document.getElementById('n-cat').innerHTML=cats.map(c=>'<option>'+c+'</option>').join('');
+  document.getElementById('n-cat').innerHTML=CATS[dept].map(c=>'<option>'+c+'</option>').join('');
 }
 
 function openNew(){updateCats();document.getElementById('modal-new').classList.add('open');}
-function closeNew(){document.getElementById('modal-new').classList.remove('open');['n-title','n-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('n-hotel').value='';document.getElementById('btn-create').disabled=false;document.getElementById('btn-create').textContent='Enviar solicitud';}
+function closeNew(){
+  document.getElementById('modal-new').classList.remove('open');
+  document.getElementById('n-title').value='';
+  document.getElementById('n-desc').value='';
+  document.getElementById('n-hotel').value='';
+  document.getElementById('btn-create').disabled=false;
+  document.getElementById('btn-create').textContent='Enviar solicitud';
+}
 
 async function createTicket(){
   const hotel=document.getElementById('n-hotel').value;
-  if(!hotel){document.getElementById('n-hotel').focus();return;}
   const titulo=document.getElementById('n-title').value.trim();
+  if(!hotel){document.getElementById('n-hotel').focus();return;}
   if(!titulo){document.getElementById('n-title').focus();return;}
   const btn=document.getElementById('btn-create');btn.disabled=true;btn.textContent='Enviando…';
   const nombre=currentUser.user_metadata?.full_name||currentUser.email;
@@ -460,58 +455,63 @@ async function createTicket(){
 }
 
 function openDet(id){
-  currentId=id;const t=allTickets.find(x=>x.id===id);
+  currentId=id;
+  const t=allTickets.find(x=>x.id===id);
   document.getElementById('d-id').textContent=t.codigo;
   document.getElementById('d-title').textContent=t.titulo;
   document.getElementById('d-body').textContent=t.descripcion||'Sin descripción.';
   const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
-  document.getElementById('d-badges').innerHTML='<span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+'<span class="badge" style="background:'+(catBg[t.categoria]||'#f0efe9')+';color:'+(catColor[t.categoria]||'#6b6a65')+'"><i class="ti '+(catIcon[t.categoria]||'ti-help-circle')+' " style="margin-right:3px"></i>'+t.categoria+'</span><span class="prio '+prioClass[t.prioridad]+'" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti '+prioIcon[t.prioridad]+'"></i>Prioridad '+t.prioridad+'</span>';
-  document.getElementById('d-info').innerHTML='<div class="di"><div class="di-label">Solicitante</div><div class="di-val">'+(t.solicitante||'—')+'</div></div><div class="di"><div class="di-label">Correo</div><div class="di-val">'+(t.user_email||'—')+'</div></div><div class="di"><div class="di-label">Hotel</div><div class="di-val">'+(t.hotel||'\u2014')+'</div></div><div class="di"><div class="di-label">Departamento</div><div class="di-val">'+(t.departamento||'—')+'</div></div><div class="di"><div class="di-label">Fecha</div><div class="di-val">'+fmt(t.fecha)+'</div></div>';
+  document.getElementById('d-badges').innerHTML='<span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+catBadge(t.categoria)+'<span class="prio '+prioClass[t.prioridad]+'" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti '+prioIcon[t.prioridad]+'"></i>Prioridad '+t.prioridad+'</span>';
+  document.getElementById('d-info').innerHTML='<div class="di"><div class="di-label">Solicitante</div><div class="di-val">'+(t.solicitante||'—')+'</div></div><div class="di"><div class="di-label">Correo</div><div class="di-val">'+(t.user_email||'—')+'</div></div><div class="di"><div class="di-label">Hotel</div><div class="di-val">'+(t.hotel||'—')+'</div></div><div class="di"><div class="di-label">Fecha</div><div class="di-val">'+fmt(t.fecha)+'</div></div>';
   // Observacion
-  const obsText = document.getElementById('obs-text');
-  const obsView = document.getElementById('obs-view');
-  const obsWrap = document.getElementById('obs-wrap');
-  const obsContent = document.getElementById('obs-content');
   if(isAdmin()){
-    obsWrap.style.display='block';
-    obsView.style.display='none';
-    obsText.value = t.observacion||'';
+    document.getElementById('obs-wrap').style.display='block';
+    document.getElementById('obs-view').style.display='none';
+    document.getElementById('obs-text').value=t.observacion||'';
   } else {
-    obsWrap.style.display='none';
+    document.getElementById('obs-wrap').style.display='none';
     if(t.observacion){
-      obsView.style.display='block';
-      obsContent.textContent = t.observacion;
+      document.getElementById('obs-view').style.display='block';
+      document.getElementById('obs-content').textContent=t.observacion;
     } else {
-      obsView.style.display='none';
+      document.getElementById('obs-view').style.display='none';
     }
   }
   document.getElementById('admin-actions').style.display=isAdmin()?'block':'none';
   document.getElementById('btn-delete').style.display=isAdmin()?'inline-flex':'none';
-  if(isAdmin()){const estados=['Abierto','En proceso','Resuelto','Cerrado'];
-    document.getElementById('d-status').innerHTML=estados.map(e=>{const blocked=e==='Cerrado'&&t.estado!=='Resuelto';return '<button class="status-btn '+(e===t.estado?'active':'')+(blocked?' disabled-btn':'')+'" '+(blocked?'disabled title="Primero debe estar Resuelto"':'onclick="setStatus(\''+e+'\')"')+'>'+e+'</button>';}).join('');
+  if(isAdmin()){
+    const estados=['Abierto','En proceso','Resuelto','Cerrado'];
+    document.getElementById('d-status').innerHTML=estados.map(e=>{
+      const blocked=e==='Cerrado'&&t.estado!=='Resuelto';
+      return '<button class="status-btn '+(e===t.estado?'active':'')+'" '+(blocked?'disabled title="El ticket debe estar Resuelto primero"':'onclick="setStatus(\''+e+'\')"')+'>'+e+'</button>';
+    }).join('');
+  }
   document.getElementById('modal-det').classList.add('open');
 }
+
 function closeDet(){document.getElementById('modal-det').classList.remove('open');currentId=null;}
 
 async function setStatus(est){
   const{error}=await sb.from('tickets').update({estado:est}).eq('id',currentId);
   if(error){showToast('Error: '+error.message,true);return;}
-  // Cerrar modal y actualizar lista inmediatamente
-  const savedId=currentId;
-  closeDet();
-  await loadTickets();
-  showToast('Estado actualizado a: '+est);
-  // Enviar correo en segundo plano si es Resuelto
   if(est==='Resuelto'){
-    const t=allTickets.find(x=>x.id===savedId);
+    const t=allTickets.find(x=>x.id===currentId);
     if(t&&t.user_email){
       fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{
         method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM'},
-        body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email,estado:est})
+        body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email})
       }).catch(()=>{});
     }
   }
+  closeDet();await loadTickets();showToast('Estado actualizado a: '+est);
+}
+
+async function saveObs(){
+  const obs=document.getElementById('obs-text').value.trim();
+  const{error}=await sb.from('tickets').update({observacion:obs}).eq('id',currentId);
+  if(error){showToast('Error: '+error.message,true);return;}
+  await loadTickets();showToast('Observación guardada');
 }
 
 async function deleteTicket(){
@@ -520,17 +520,6 @@ async function deleteTicket(){
   const{error}=await sb.from('tickets').delete().eq('id',currentId);
   if(error){showToast('Error: '+error.message,true);return;}
   closeDet();await loadTickets();showToast('Solicitud '+codigo+' eliminada');
-}
-
-async function saveObs(){
-  const obs = document.getElementById('obs-text').value.trim();
-  const btn = document.getElementById('obs-btn');
-  btn.disabled=true;btn.textContent='Guardando...';
-  const{error}=await sb.from('tickets').update({observacion:obs}).eq('id',currentId);
-  if(error){showToast('Error: '+error.message,true);btn.disabled=false;btn.textContent='Guardar observación';return;}
-  await loadTickets();
-  btn.disabled=false;btn.textContent='Guardar observación';
-  showToast('Observación guardada');
 }
 
 function showToast(msg,isError=false){
@@ -545,6 +534,5 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeNew();closeDet
 sb.auth.getSession().then(({data:{session}})=>{if(session)initApp(session.user);});
 sb.auth.onAuthStateChange((_,session)=>{if(!session&&currentUser)doLogout();});
 </script>
-<div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
 </body>
 </html>
