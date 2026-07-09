@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
@@ -691,17 +690,21 @@ function exportExcel(){
   try{
     const tickets=getReportTickets();
     if(!tickets.length){showToast('No hay tickets para exportar',true);return;}
-    // Build rows manually
     const headers=['Código','Título','Descripción','Departamento','Hotel','Categoría','Estado','Prioridad','Solicitante','Correo','Fecha','Observación'];
-    const rows=tickets.map(t=>[t.codigo||'',t.titulo||'',t.descripcion||'',t.departamento||'',t.hotel||'',t.categoria||'',t.estado||'',t.prioridad||'',t.solicitante||'',t.user_email||'',t.fecha||'',t.observacion||'']);
-    const wsData=[headers,...rows];
-    const ws=XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols']=[{wch:10},{wch:30},{wch:40},{wch:15},{wch:25},{wch:25},{wch:12},{wch:10},{wch:20},{wch:30},{wch:12},{wch:40}];
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,'Tickets',ws);
-    const fecha=new Date().toISOString().slice(0,10);
-    XLSX.writeFile(wb,'Reporte_Tickets_'+fecha+'.xlsx');
-    showToast('Excel exportado — '+tickets.length+' tickets');
+    const rows=tickets.map(t=>[t.codigo,t.titulo,t.descripcion,t.departamento,t.hotel,t.categoria,t.estado,t.prioridad,t.solicitante,t.user_email,t.fecha,t.observacion]);
+    const esc=v=>'"'+(String(v||'').replace(/"/g,'""'))+'"';
+    const csv='﻿'+[headers,...rows].map(r=>r.map(esc).join(',')).join('
+');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='Reporte_Tickets_'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Reporte exportado — '+tickets.length+' tickets');
   }catch(e){showToast('Error al exportar: '+e.message,true);}
 }
 
