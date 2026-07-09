@@ -235,6 +235,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div><h2>Reportes</h2><p id="report-sub" style="font-size:12px;color:var(--text3);margin-top:2px"></p></div>
         <button class="btn-export" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i>Exportar a Excel</button>
       </div>
+      <!-- Filtros de reporte -->
+      <div style="background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:1rem">
+        <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:.75rem"><i class="ti ti-filter" style="margin-right:4px"></i>Filtrar reporte</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Departamento</div>
+            <select id="rf-dept" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+              <option value="">Todos</option><option>TI</option><option>Mantenimiento</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hotel</div>
+            <select id="rf-hotel" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+              <option value="">Todos</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Estado</div>
+            <select id="rf-estado" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+              <option value="">Todos</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Prioridad</div>
+            <select id="rf-prio" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+              <option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Desde</div>
+            <input type="date" id="rf-desde" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hasta</div>
+            <input type="date" id="rf-hasta" style="font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none">
+          </div>
+          <button onclick="applyReportFilter()" style="background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 12px;height:30px;font-size:12px;cursor:pointer;font-weight:500">Aplicar</button>
+          <button onclick="clearReportFilter()" style="background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 12px;height:30px;font-size:12px;cursor:pointer;color:var(--text2)">Limpiar</button>
+        </div>
+      </div>
       <div class="report-summary">
         <div class="summary-card"><div class="summary-val" id="r-total">—</div><div class="summary-label">Total tickets</div></div>
         <div class="summary-card"><div class="summary-val" style="color:var(--blue-text)" id="r-abierto">—</div><div class="summary-label">Abiertos</div></div>
@@ -247,7 +287,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="chart-card"><h3>Por hotel</h3><div class="chart-wrap"><canvas id="chart-hotel"></canvas></div></div>
         <div class="chart-card"><h3>Por prioridad</h3><div class="chart-wrap"><canvas id="chart-prio"></canvas></div></div>
       </div>
-      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría</h3><div class="chart-wrap" style="height:280px"><canvas id="chart-cat"></canvas></div></div>
+      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría (top categorías con tickets)</h3><div class="chart-wrap" style="height:280px"><canvas id="chart-cat"></canvas></div></div>
     </div><!-- end view-reportes -->
 
   <div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
@@ -571,6 +611,7 @@ async function deleteTicket(){
 }
 
 let charts={};
+let reportFilters={dept:'',hotel:'',estado:'',prio:'',fechaDesde:'',fechaHasta:''};
 
 function showView(view){
   document.getElementById('view-solicitudes').style.display=view==='solicitudes'?'block':'none';
@@ -580,60 +621,85 @@ function showView(view){
   if(view==='reportes') renderReports();
 }
 
+function getReportTickets(){
+  return allTickets.filter(t=>{
+    if(reportFilters.dept&&t.departamento!==reportFilters.dept)return false;
+    if(reportFilters.hotel&&t.hotel!==reportFilters.hotel)return false;
+    if(reportFilters.estado&&t.estado!==reportFilters.estado)return false;
+    if(reportFilters.prio&&t.prioridad!==reportFilters.prio)return false;
+    if(reportFilters.fechaDesde&&t.fecha<reportFilters.fechaDesde)return false;
+    if(reportFilters.fechaHasta&&t.fecha>reportFilters.fechaHasta)return false;
+    return true;
+  });
+}
+
+function applyReportFilter(){
+  reportFilters.dept=document.getElementById('rf-dept').value;
+  reportFilters.hotel=document.getElementById('rf-hotel').value;
+  reportFilters.estado=document.getElementById('rf-estado').value;
+  reportFilters.prio=document.getElementById('rf-prio').value;
+  reportFilters.fechaDesde=document.getElementById('rf-desde').value;
+  reportFilters.fechaHasta=document.getElementById('rf-hasta').value;
+  renderReports();
+}
+
+function clearReportFilter(){
+  ['rf-dept','rf-hotel','rf-estado','rf-prio'].forEach(id=>document.getElementById(id).value='');
+  ['rf-desde','rf-hasta'].forEach(id=>document.getElementById(id).value='');
+  reportFilters={dept:'',hotel:'',estado:'',prio:'',fechaDesde:'',fechaHasta:''};
+  renderReports();
+}
+
 function renderReports(){
-  const tickets=allTickets;
+  const tickets=getReportTickets();
   const now=new Date();
-  document.getElementById('report-sub').textContent='Actualizado '+now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'})+' — '+tickets.length+' tickets en total';
+  document.getElementById('report-sub').textContent='Actualizado '+now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'})+' · '+tickets.length+' tickets';
   document.getElementById('r-total').textContent=tickets.length;
   document.getElementById('r-abierto').textContent=tickets.filter(t=>t.estado==='Abierto').length;
   document.getElementById('r-proceso').textContent=tickets.filter(t=>t.estado==='En proceso').length;
   document.getElementById('r-resuelto').textContent=tickets.filter(t=>t.estado==='Resuelto').length;
 
   const count=(key,vals)=>vals.map(v=>tickets.filter(t=>t[key]===v).length);
-
-  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00'];
-  const LIGHT=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4'];
+  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00','#CC5500','#1A6B2A','#7B4F2E','#92700A','#555555'];
+  const LIGHT=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4','#FFF0E6','#E8F5E9','#F3E5D8','#FFF9C4','#F0F0F0'];
 
   function makeChart(id,type,labels,data,colors,bgColors){
-    if(charts[id]) charts[id].destroy();
-    const ctx=document.getElementById(id).getContext('2d');
+    if(charts[id]){charts[id].destroy();delete charts[id];}
+    const canvas=document.getElementById(id);
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
     charts[id]=new Chart(ctx,{
       type,
-      data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?6:0}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:11},boxWidth:12,padding:10}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.05)'}},x:{grid:{display:false}}}:{}}
+      data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:type==='doughnut'?bgColors||colors:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?4:0}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:10},boxWidth:10,padding:8}}},
+        scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:10}},grid:{display:false}}}:{}}
     });
   }
 
-  // Estado
-  const estadoLabels=['Abierto','En proceso','Resuelto','Cerrado'];
-  makeChart('chart-estado','doughnut',estadoLabels,count('estado',estadoLabels),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
-
-  // Departamento
+  makeChart('chart-estado','doughnut',['Abierto','En proceso','Resuelto','Cerrado'],count('estado',['Abierto','En proceso','Resuelto','Cerrado']),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
   makeChart('chart-dept','doughnut',['TI','Mantenimiento'],count('departamento',['TI','Mantenimiento']),['#185FA5','#6B21A8'],['#E6F1FB','#F0EAFB']);
-
-  // Hotel
   const hoteles=['Hotel Plaza Juan Carlos','Hotel Plaza San Martín','Hotel Plaza del Libertador','Hotel Plaza del General'];
-  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),count('hotel',hoteles),COLORS.slice(0,4),LIGHT.slice(0,4));
-
-  // Prioridad
+  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),count('hotel',hoteles),COLORS,LIGHT);
   makeChart('chart-prio','doughnut',['Alta','Media','Baja'],count('prioridad',['Alta','Media','Baja']),['#A32D2D','#854F0B','#3B6D11'],['#FCEBEB','#FAEEDA','#EAF3DE']);
-
-  // Categoría
   const allCats=[...CATS.TI,...CATS.Mantenimiento];
-  const catCounts=allCats.map(c=>tickets.filter(t=>t.categoria===c).length);
-  const nonZero=allCats.map((c,i)=>({c,n:catCounts[i]})).filter(x=>x.n>0);
-  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS.slice(0,nonZero.length),LIGHT.slice(0,nonZero.length));
+  const nonZero=allCats.map((c,i)=>({c,n:tickets.filter(t=>t.categoria===c).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
+  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS,LIGHT);
 }
 
 function exportExcel(){
-  if(typeof XLSX==='undefined'){showToast('Cargando Excel…');return;}
-  const data=allTickets.map(t=>({'Código':t.codigo,'Título':t.titulo,'Departamento':t.departamento,'Hotel':t.hotel||'—','Categoría':t.categoria,'Estado':t.estado,'Prioridad':t.prioridad,'Solicitante':t.solicitante,'Correo':t.user_email||'—','Fecha':t.fecha,'Observación':t.observacion||''}));
-  const ws=XLSX.utils.json_to_sheet(data);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,'Tickets',ws);
-  const fecha=new Date().toISOString().slice(0,10);
-  XLSX.writeFile(wb,'Reporte_Tickets_'+fecha+'.xlsx');
-  showToast('Excel exportado correctamente');
+  try{
+    const tickets=getReportTickets();
+    if(!tickets.length){showToast('No hay tickets para exportar',true);return;}
+    const data=tickets.map(t=>({'Código':t.codigo,'Título':t.titulo,'Descripción':t.descripcion||'','Departamento':t.departamento||'','Hotel':t.hotel||'','Categoría':t.categoria||'','Estado':t.estado||'','Prioridad':t.prioridad||'','Solicitante':t.solicitante||'','Correo':t.user_email||'','Fecha':t.fecha||'','Observación':t.observacion||''}));
+    const ws=XLSX.utils.json_to_sheet(data);
+    ws['!cols']=[{wch:10},{wch:30},{wch:40},{wch:15},{wch:25},{wch:25},{wch:12},{wch:10},{wch:20},{wch:30},{wch:12},{wch:40}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,'Tickets',ws);
+    const fecha=new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb,'Reporte_Tickets_'+fecha+'.xlsx');
+    showToast('Excel exportado — '+tickets.length+' tickets');
+  }catch(e){showToast('Error al exportar: '+e.message,true);}
 }
 
 function showToast(msg,isError=false){
