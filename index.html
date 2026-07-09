@@ -6,6 +6,8 @@
 <title>Soporte — Distrito Hotelero Plaza San Martín</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
@@ -117,6 +119,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .section-label{font-size:12px;color:var(--text3);margin-bottom:6px}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;display:none;align-items:center;gap:8px;z-index:200;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .toast.show{display:flex}.toast.error{background:var(--red-bg);color:var(--red-text)}
+.nav-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:1.5rem}
+.nav-tab{padding:8px 20px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--text);font-weight:500;border-bottom-color:var(--text)}
+.reports-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.chart-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
+.chart-card h3{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.875rem;text-transform:uppercase;letter-spacing:.04em}
+.chart-wrap{position:relative;height:220px}
+.report-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
+.summary-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;text-align:center}
+.summary-val{font-size:28px;font-weight:500;margin-bottom:4px}
+.summary-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.btn-export{background:var(--green-bg);color:var(--green-text);border:.5px solid var(--green-text);border-radius:var(--radius);padding:0 16px;height:36px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px}
+.btn-export:hover{opacity:.85}
+.reports-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
+@media(max-width:600px){.reports-grid{grid-template-columns:1fr}.report-summary{grid-template-columns:1fr 1fr}}
 .footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em}
 .footer span{color:rgba(255,255,255,0.5)}
 @media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}.topbar-title{font-size:12px}}
@@ -175,10 +193,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="app">
-    <div class="page-head">
-      <div><h2 id="page-title">Mis solicitudes</h2><p id="page-sub"></p></div>
-      <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus"></i>Nueva solicitud</button>
+    <div id="nav-tabs-wrap" style="display:none">
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="nav-solicitudes" onclick="showView('solicitudes')"><i class="ti ti-ticket" style="margin-right:5px"></i>Solicitudes</button>
+        <button class="nav-tab" id="nav-reportes" onclick="showView('reportes')"><i class="ti ti-chart-bar" style="margin-right:5px"></i>Reportes</button>
+      </div>
     </div>
+    <div id="view-solicitudes">
+      <div class="page-head">
+        <div><h2 id="page-title">Mis solicitudes</h2><p id="page-sub"></p></div>
+        <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus"></i>Nueva solicitud</button>
+      </div>
     <div id="dept-tabs-wrap" style="display:none">
       <div class="dept-tabs">
         <button class="dept-tab active" id="tab-todos" onclick="setDeptFilter('todos')"><i class="ti ti-layout-grid" style="margin-right:4px"></i>Todos</button>
@@ -203,6 +228,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="ticket-list" id="list" style="margin-top:.5rem"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
   </div>
+    </div><!-- end view-solicitudes -->
+
+    <div id="view-reportes" style="display:none">
+      <div class="reports-head">
+        <div><h2>Reportes</h2><p id="report-sub" style="font-size:12px;color:var(--text3);margin-top:2px"></p></div>
+        <button class="btn-export" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i>Exportar a Excel</button>
+      </div>
+      <div class="report-summary">
+        <div class="summary-card"><div class="summary-val" id="r-total">—</div><div class="summary-label">Total tickets</div></div>
+        <div class="summary-card"><div class="summary-val" style="color:var(--blue-text)" id="r-abierto">—</div><div class="summary-label">Abiertos</div></div>
+        <div class="summary-card"><div class="summary-val" style="color:var(--amber-text)" id="r-proceso">—</div><div class="summary-label">En proceso</div></div>
+        <div class="summary-card"><div class="summary-val" style="color:var(--green-text)" id="r-resuelto">—</div><div class="summary-label">Resueltos</div></div>
+      </div>
+      <div class="reports-grid">
+        <div class="chart-card"><h3>Por estado</h3><div class="chart-wrap"><canvas id="chart-estado"></canvas></div></div>
+        <div class="chart-card"><h3>Por departamento</h3><div class="chart-wrap"><canvas id="chart-dept"></canvas></div></div>
+        <div class="chart-card"><h3>Por hotel</h3><div class="chart-wrap"><canvas id="chart-hotel"></canvas></div></div>
+        <div class="chart-card"><h3>Por prioridad</h3><div class="chart-wrap"><canvas id="chart-prio"></canvas></div></div>
+      </div>
+      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría</h3><div class="chart-wrap" style="height:280px"><canvas id="chart-cat"></canvas></div></div>
+    </div><!-- end view-reportes -->
+
   <div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
 </div>
 
@@ -339,6 +386,7 @@ async function initApp(user){
   else if(userRole==='admin'&&userDept==='Mantenimiento'){badge.textContent='Admin Mantenimiento';badge.className='role-badge role-admin-mant';badge.style.display='inline-flex';}
   else{badge.style.display='none';}
   document.getElementById('dept-tabs-wrap').style.display=userRole==='superadmin'?'block':'none';
+  document.getElementById('nav-tabs-wrap').style.display=isAdmin()?'block':'none';
   document.getElementById('stats-wrap').style.display=isAdmin()?'block':'none';
   if(userRole==='admin'&&userDept)deptFilter=userDept;
   document.getElementById('page-title').textContent=userRole==='superadmin'?'Todas las solicitudes':userRole==='admin'?'Solicitudes — '+userDept:'Mis solicitudes';
@@ -520,6 +568,72 @@ async function deleteTicket(){
   const{error}=await sb.from('tickets').delete().eq('id',currentId);
   if(error){showToast('Error: '+error.message,true);return;}
   closeDet();await loadTickets();showToast('Solicitud '+codigo+' eliminada');
+}
+
+let charts={};
+
+function showView(view){
+  document.getElementById('view-solicitudes').style.display=view==='solicitudes'?'block':'none';
+  document.getElementById('view-reportes').style.display=view==='reportes'?'block':'none';
+  document.getElementById('nav-solicitudes').classList.toggle('active',view==='solicitudes');
+  document.getElementById('nav-reportes').classList.toggle('active',view==='reportes');
+  if(view==='reportes') renderReports();
+}
+
+function renderReports(){
+  const tickets=allTickets;
+  const now=new Date();
+  document.getElementById('report-sub').textContent='Actualizado '+now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'})+' — '+tickets.length+' tickets en total';
+  document.getElementById('r-total').textContent=tickets.length;
+  document.getElementById('r-abierto').textContent=tickets.filter(t=>t.estado==='Abierto').length;
+  document.getElementById('r-proceso').textContent=tickets.filter(t=>t.estado==='En proceso').length;
+  document.getElementById('r-resuelto').textContent=tickets.filter(t=>t.estado==='Resuelto').length;
+
+  const count=(key,vals)=>vals.map(v=>tickets.filter(t=>t[key]===v).length);
+
+  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00'];
+  const LIGHT=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4'];
+
+  function makeChart(id,type,labels,data,colors,bgColors){
+    if(charts[id]) charts[id].destroy();
+    const ctx=document.getElementById(id).getContext('2d');
+    charts[id]=new Chart(ctx,{
+      type,
+      data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:colors,borderWidth:type==='bar'?0:2,borderRadius:type==='bar'?6:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:11},boxWidth:12,padding:10}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.05)'}},x:{grid:{display:false}}}:{}}
+    });
+  }
+
+  // Estado
+  const estadoLabels=['Abierto','En proceso','Resuelto','Cerrado'];
+  makeChart('chart-estado','doughnut',estadoLabels,count('estado',estadoLabels),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
+
+  // Departamento
+  makeChart('chart-dept','doughnut',['TI','Mantenimiento'],count('departamento',['TI','Mantenimiento']),['#185FA5','#6B21A8'],['#E6F1FB','#F0EAFB']);
+
+  // Hotel
+  const hoteles=['Hotel Plaza Juan Carlos','Hotel Plaza San Martín','Hotel Plaza del Libertador','Hotel Plaza del General'];
+  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),count('hotel',hoteles),COLORS.slice(0,4),LIGHT.slice(0,4));
+
+  // Prioridad
+  makeChart('chart-prio','doughnut',['Alta','Media','Baja'],count('prioridad',['Alta','Media','Baja']),['#A32D2D','#854F0B','#3B6D11'],['#FCEBEB','#FAEEDA','#EAF3DE']);
+
+  // Categoría
+  const allCats=[...CATS.TI,...CATS.Mantenimiento];
+  const catCounts=allCats.map(c=>tickets.filter(t=>t.categoria===c).length);
+  const nonZero=allCats.map((c,i)=>({c,n:catCounts[i]})).filter(x=>x.n>0);
+  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS.slice(0,nonZero.length),LIGHT.slice(0,nonZero.length));
+}
+
+function exportExcel(){
+  if(typeof XLSX==='undefined'){showToast('Cargando Excel…');return;}
+  const data=allTickets.map(t=>({'Código':t.codigo,'Título':t.titulo,'Departamento':t.departamento,'Hotel':t.hotel||'—','Categoría':t.categoria,'Estado':t.estado,'Prioridad':t.prioridad,'Solicitante':t.solicitante,'Correo':t.user_email||'—','Fecha':t.fecha,'Observación':t.observacion||''}));
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,'Tickets',ws);
+  const fecha=new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb,'Reporte_Tickets_'+fecha+'.xlsx');
+  showToast('Excel exportado correctamente');
 }
 
 function showToast(msg,isError=false){
