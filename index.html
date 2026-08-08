@@ -3,663 +3,362 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Soporte — Distrito Hotelero Plaza San Martín</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<title>TicketFlow — Gestión de soporte para empresas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#fff;--bg2:#f7f7f5;--bg3:#f0efe9;--text:#1a1a1a;--text2:#6b6a65;--text3:#9a9891;--border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--radius:8px;--radius-lg:12px;--blue-bg:#E6F1FB;--blue-text:#185FA5;--amber-bg:#FAEEDA;--amber-text:#854F0B;--green-bg:#EAF3DE;--green-text:#3B6D11;--gray-bg:#F1EFE8;--gray-text:#5F5E5A;--red-bg:#FCEBEB;--red-text:#A32D2D;--purple-bg:#F0EAFB;--purple-text:#6B21A8;}
-@media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg2:#252523;--bg3:#2c2c29;--text:#e8e6df;--text2:#9a9891;--text3:#6b6a65;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--blue-bg:#0c447c;--blue-text:#B5D4F4;--amber-bg:#633806;--amber-text:#FAC775;--green-bg:#27500A;--green-text:#C0DD97;--gray-bg:#444441;--gray-text:#D3D1C7;--red-bg:#791F1F;--red-text:#F7C1C1;--purple-bg:#3B1A5F;--purple-text:#D8B4FE;}}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;min-height:100vh}
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
-.login-box{background:var(--bg);border:.5px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:380px;overflow:hidden}
-.login-header{background:#1a1a1a;padding:2rem;text-align:center}
-.login-header h1{font-size:16px;font-weight:400;color:#fff;letter-spacing:.08em;text-transform:uppercase}
-.login-header p{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px}
-.login-body{padding:1.5rem}
-.login-tabs{display:flex;margin-bottom:1.25rem;border:.5px solid var(--border2);border-radius:var(--radius);overflow:hidden}
-.login-tab{flex:1;padding:7px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2)}
-.login-tab.active{background:var(--text);color:var(--bg);font-weight:500}
-.field{margin-bottom:.875rem}
-.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px}
-.field input,.field select,.field textarea{width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;font-family:inherit}
-.field textarea{resize:vertical;min-height:80px;line-height:1.5}
-.pass-wrap{position:relative}
-.pass-wrap input{padding-right:36px!important}
-.pass-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:2px;display:flex;align-items:center;font-size:16px;z-index:2}
-.btn-full{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);height:36px;font-size:13px;cursor:pointer;font-weight:500;margin-top:.25rem}
-.btn-full:hover{opacity:.85}
-.btn-full:disabled{opacity:.5;cursor:not-allowed}
-.login-msg{font-size:12px;text-align:center;margin-top:.75rem;padding:.5rem;border-radius:var(--radius)}
-.login-msg.error{background:var(--red-bg);color:var(--red-text)}
-.login-msg.success{background:var(--green-bg);color:var(--green-text)}
-.app-wrap{display:none;flex-direction:column;min-height:100vh}
-.app-wrap.visible{display:flex}
-.topbar{background:#1a1a1a;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.topbar-left{display:flex;align-items:center;gap:.75rem}
-.topbar-divider{width:1px;height:28px;background:rgba(255,255,255,0.15)}
-.topbar-title{font-size:14px;font-weight:400;color:#fff;letter-spacing:.05em}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.user-pill{font-size:12px;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:5px}
-.user-avatar{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#fff}
-.role-badge{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid}
-.role-superadmin{background:rgba(250,174,90,0.15);color:#FAC775;border-color:rgba(250,174,90,0.25)}
-.role-admin-ti{background:rgba(21,95,165,0.2);color:#B5D4F4;border-color:rgba(21,95,165,0.3)}
-.role-admin-mant{background:rgba(107,33,168,0.2);color:#D8B4FE;border-color:rgba(107,33,168,0.3)}
-.btn-topbar{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius);padding:0 10px;height:28px;font-size:12px;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px}
-.btn-topbar:hover{background:rgba(255,255,255,0.15)}
-.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem;flex:1}
-.nav-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:1.5rem}
-.nav-tab{padding:8px 20px;font-size:13px;border:none;cursor:pointer;background:transparent;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px}
-.nav-tab:hover{color:var(--text)}
-.nav-tab.active{color:var(--text);font-weight:500;border-bottom-color:var(--text)}
-.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
-.page-head h2{font-size:18px;font-weight:500}
-.page-head p{font-size:12px;color:var(--text3);margin-top:2px}
-.btn-primary{background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 16px;height:36px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px}
-.btn-primary:hover{opacity:.85}
-.dept-tabs{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
-.dept-tab{padding:6px 16px;border-radius:20px;border:.5px solid var(--border2);cursor:pointer;background:var(--bg);color:var(--text2);font-size:13px}
-.dept-tab:hover{background:var(--bg2)}
-.dept-tab.active{background:var(--text);color:var(--bg);font-weight:500;border-color:var(--text)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
-.stat{background:var(--bg2);border-radius:var(--radius);padding:.875rem 1rem}
-.stat-label{font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.stat-val{font-size:24px;font-weight:500}
-.toolbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.toolbar input,.toolbar select{font-size:13px;padding:6px 10px;border-radius:var(--radius);border:.5px solid var(--border2);background:var(--bg);color:var(--text);height:34px;outline:none}
-.toolbar input{flex:1;min-width:180px}
-.ticket-list{display:flex;flex-direction:column;gap:8px}
-.ticket{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:.875rem 1rem;cursor:pointer;transition:border-color .15s}
-.ticket:hover{border-color:var(--border2)}
-.ticket-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
-.ticket-title{font-size:14px;font-weight:500}
-.ticket-id{font-size:11px;color:var(--text3);white-space:nowrap}
-.ticket-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px}
-.badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
-.b-abierto{background:var(--blue-bg);color:var(--blue-text)}
-.b-en-proceso{background:var(--amber-bg);color:var(--amber-text)}
-.b-resuelto{background:var(--green-bg);color:var(--green-text)}
-.b-cerrado{background:var(--gray-bg);color:var(--gray-text)}
-.b-ti{background:var(--blue-bg);color:var(--blue-text)}
-.b-mant{background:var(--purple-bg);color:var(--purple-text)}
-.cat-tag{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:3px}
-.ticket-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:6px}
-.ticket-foot{display:flex;align-items:center;justify-content:space-between;padding-top:7px;border-top:.5px solid var(--border)}
-.avatar{width:20px;height:20px;border-radius:50%;background:var(--blue-bg);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--blue-text)}
-.user-info-row{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
-.prio{font-size:11px;display:flex;align-items:center;gap:3px}
-.prio-alta{color:var(--red-text)}.prio-media{color:var(--amber-text)}.prio-baja{color:var(--green-text)}
-.date{font-size:11px;color:var(--text3)}
-.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:13px;background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg)}
-.empty i{font-size:28px;display:block;margin:0 auto 8px;opacity:.5}
-.loading{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
-.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:1rem;z-index:100}
-.modal-wrap.open{display:flex}
-.modal{background:var(--bg);border-radius:var(--radius-lg);border:.5px solid var(--border2);width:100%;max-width:480px;padding:1.375rem;max-height:90vh;overflow-y:auto}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.125rem}
-.modal-head h2{font-size:16px;font-weight:500}
-.close-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;padding:2px 4px}
-.close-btn:hover{color:var(--text2)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.125rem}
-.btn-cancel{background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 14px;height:34px;font-size:13px;cursor:pointer;color:var(--text2)}
-.btn-cancel:hover{background:var(--bg2)}
-.btn-submit{background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 16px;height:34px;font-size:13px;cursor:pointer;font-weight:500}
-.btn-submit:hover{opacity:.85}
-.btn-submit:disabled{opacity:.5;cursor:not-allowed}
-.btn-danger{background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 14px;height:34px;font-size:13px;cursor:pointer;color:var(--red-text)}
-.btn-danger:hover{background:var(--red-bg)}
-.detail-body{font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius);margin-bottom:1rem}
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
-.di{font-size:12px}.di-label{color:var(--text3);margin-bottom:2px}.di-val{font-weight:500}
-.status-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
-.status-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:.5px solid var(--border2);cursor:pointer;background:var(--bg2);color:var(--text2)}
-.status-btn:hover{background:var(--bg3)}
-.status-btn.active{font-weight:500;border-color:var(--text);color:var(--text)}
-.status-btn:disabled{opacity:.35;cursor:not-allowed;border-style:dashed}
-.section-label{font-size:12px;color:var(--text3);margin-bottom:6px}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:var(--radius);font-size:13px;display:none;align-items:center;gap:8px;z-index:200;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.toast.show{display:flex}.toast.error{background:var(--red-bg);color:var(--red-text)}
-/* Reports */
-.reports-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-.chart-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
-.chart-card h3{font-size:11px;font-weight:500;color:var(--text3);margin-bottom:.875rem;text-transform:uppercase;letter-spacing:.05em}
-.chart-wrap{position:relative;height:200px}
-.report-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem}
-.summary-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;text-align:center}
-.summary-val{font-size:28px;font-weight:500;margin-bottom:4px}
-.summary-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
-.btn-export{background:var(--green-bg);color:var(--green-text);border:.5px solid var(--green-text);border-radius:var(--radius);padding:0 16px;height:36px;font-size:13px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:6px}
-.btn-export:hover{opacity:.85}
-.rf-select{font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none}
-.rf-input{font-size:12px;padding:5px 8px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);height:30px;outline:none}
-.footer{background:#1a1a1a;padding:12px 1.5rem;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:.03em;flex-shrink:0}
-.footer span{color:rgba(255,255,255,0.5)}
-@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}.topbar-title{font-size:12px}.reports-grid{grid-template-columns:1fr}.report-summary{grid-template-columns:1fr 1fr}}
+:root{
+  --black:#0a0a0a;
+  --white:#ffffff;
+  --gray:#f4f4f2;
+  --gray2:#e8e8e4;
+  --gray3:#9a9891;
+  --text:#1a1a18;
+  --accent:#2563eb;
+  --accent2:#1d4ed8;
+  --green:#16a34a;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--text);font-size:15px;line-height:1.6}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray2);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--black);letter-spacing:-.02em}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-size:14px;color:var(--gray3);text-decoration:none;font-weight:500}
+.nav-links a:hover{color:var(--text)}
+.btn-nav{background:var(--black);color:var(--white);border:none;border-radius:8px;padding:8px 18px;font-size:14px;cursor:pointer;font-weight:500;text-decoration:none;font-family:'Inter',sans-serif}
+.btn-nav:hover{background:#333}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;background:var(--white);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(37,99,235,0.08),transparent);pointer-events:none}
+.hero-eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px;justify-content:center}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:32px;height:1px;background:var(--accent);opacity:.4}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;color:var(--black);max-width:800px;margin-bottom:1.5rem}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--gray3);max-width:520px;margin-bottom:2.5rem;font-weight:400}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:var(--black);color:var(--white);border:none;border-radius:10px;padding:14px 28px;font-size:15px;cursor:pointer;font-weight:500;text-decoration:none;font-family:'Inter',sans-serif;transition:transform .15s,box-shadow .15s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.15)}
+.btn-secondary{background:transparent;color:var(--text);border:1.5px solid var(--gray2);border-radius:10px;padding:14px 28px;font-size:15px;cursor:pointer;font-weight:500;text-decoration:none;font-family:'Inter',sans-serif;transition:border-color .15s}
+.btn-secondary:hover{border-color:var(--text)}
+.hero-note{font-size:12px;color:var(--gray3);margin-top:1.25rem}
+.hero-note strong{color:var(--green)}
+
+/* MOCKUP */
+.mockup-wrap{margin-top:4rem;width:100%;max-width:900px;position:relative}
+.mockup-bar{background:#1a1a1a;border-radius:12px 12px 0 0;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#ff5f57}
+.dot-y{background:#febc2e}
+.dot-g{background:#28c840}
+.mockup-url{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;height:22px;margin:0 12px;display:flex;align-items:center;padding:0 10px}
+.mockup-url span{font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace}
+.mockup-screen{background:#f0efe9;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e0dfd8;border-top:none}
+.mock-topbar{background:#1a1a1a;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.mock-logo{font-family:'Space Grotesk',sans-serif;font-size:13px;color:rgba(255,255,255,0.7);letter-spacing:.05em}
+.mock-user{display:flex;align-items:center;gap:8px}
+.mock-avatar{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:600}
+.mock-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(250,174,90,0.15);color:#FAC775;border:1px solid rgba(250,174,90,0.25)}
+.mock-body{padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.mock-stat{background:#fff;border-radius:8px;padding:12px;border:.5px solid rgba(0,0,0,0.08)}
+.mock-stat-val{font-size:22px;font-weight:600;color:#1a1a1a;font-family:'Space Grotesk',sans-serif}
+.mock-stat-label{font-size:10px;color:#9a9891;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.mock-tickets{padding:0 20px 20px}
+.mock-ticket{background:#fff;border-radius:8px;padding:12px;border:.5px solid rgba(0,0,0,0.08);margin-bottom:8px}
+.mock-ticket-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.mock-ticket-title{font-size:12px;font-weight:500;color:#1a1a1a}
+.mock-ticket-id{font-size:10px;color:#9a9891}
+.mock-chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500}
+.chip-blue{background:#E6F1FB;color:#185FA5}
+.chip-amber{background:#FAEEDA;color:#854F0B}
+.chip-green{background:#EAF3DE;color:#3B6D11}
+.chip-purple{background:#F0EAFB;color:#6B21A8}
+.chip-gray{background:#E6F1FB;color:#185FA5}
+
+/* LOGOS */
+.logos-section{padding:3rem 2rem;border-top:1px solid var(--gray2);border-bottom:1px solid var(--gray2);background:var(--gray)}
+.logos-label{text-align:center;font-size:12px;color:var(--gray3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.5rem}
+.logos-row{display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap}
+.logo-item{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:#ccc;letter-spacing:-.01em}
+
+/* FEATURES */
+.features{padding:6rem 2rem;max-width:1100px;margin:0 auto}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:700;letter-spacing:-.02em;color:var(--black);margin-bottom:1rem;line-height:1.1}
+.section-sub{font-size:1rem;color:var(--gray3);max-width:480px;margin-bottom:3.5rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{background:var(--gray);border-radius:12px;padding:1.75rem;border:1px solid var(--gray2)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--black);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;font-size:18px}
+.feature-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin-bottom:.5rem;color:var(--black)}
+.feature-desc{font-size:14px;color:var(--gray3);line-height:1.6}
+
+/* HOW IT WORKS */
+.how{padding:6rem 2rem;background:var(--black);color:var(--white)}
+.how-inner{max-width:1000px;margin:0 auto}
+.how .section-label{color:rgba(255,255,255,0.4)}
+.how .section-title{color:var(--white)}
+.how .section-sub{color:rgba(255,255,255,0.5)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem}
+.step{padding:1.5rem;border:1px solid rgba(255,255,255,0.08);border-radius:12px;background:rgba(255,255,255,0.03)}
+.step-num{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:rgba(255,255,255,0.08);margin-bottom:.75rem}
+.step-title{font-size:15px;font-weight:600;color:var(--white);margin-bottom:.5rem}
+.step-desc{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6}
+
+/* PRICING */
+.pricing{padding:6rem 2rem;max-width:900px;margin:0 auto;text-align:center}
+.pricing-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;text-align:left}
+.pricing-card{border-radius:16px;padding:2rem;border:1.5px solid var(--gray2)}
+.pricing-card.featured{background:var(--black);border-color:var(--black);color:var(--white)}
+.pricing-badge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:block}
+.pricing-card.featured .pricing-badge{color:#FAC775}
+.pricing-name{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:.5rem}
+.pricing-price{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
+.pricing-price span{font-size:16px;font-weight:400;opacity:.5}
+.pricing-desc{font-size:13px;opacity:.5;margin-bottom:1.5rem}
+.pricing-features{list-style:none;margin-bottom:1.75rem}
+.pricing-features li{font-size:14px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;opacity:.8}
+.pricing-card:not(.featured) .pricing-features li{border-color:var(--gray2)}
+.pricing-features li::before{content:'✓';font-weight:600;color:var(--green);flex-shrink:0}
+.pricing-card.featured .pricing-features li::before{color:#86efac}
+.btn-pricing{display:block;text-align:center;padding:12px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif}
+.btn-pricing-dark{background:var(--white);color:var(--black)}
+.btn-pricing-light{background:var(--black);color:var(--white)}
+
+/* CTA */
+.cta-section{padding:6rem 2rem;background:var(--gray);text-align:center}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-inner h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.75rem,4vw,2.5rem);font-weight:700;letter-spacing:-.02em;color:var(--black);margin-bottom:1rem}
+.cta-inner p{color:var(--gray3);margin-bottom:2rem}
+
+/* FOOTER */
+footer{background:var(--black);padding:3rem 2rem;text-align:center}
+.footer-logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.footer-logo span{color:var(--accent)}
+.footer-sub{font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:1.5rem}
+.footer-contact{font-size:13px;color:rgba(255,255,255,0.5)}
+.footer-contact a{color:rgba(255,255,255,0.5);text-decoration:none}
+.footer-contact a:hover{color:var(--white)}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);margin-top:1.5rem}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .features-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .pricing-cards{grid-template-columns:1fr}
+  .mock-body{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
-<div class="login-screen" id="login-screen">
-  <div class="login-box">
-    <div class="login-header">
-      <h1>Sistema de Solicitudes</h1>
-      <p>Distrito Hotelero Plaza San Martín</p>
+<nav>
+  <div class="nav-logo">Ticket<span>Flow</span></div>
+  <div class="nav-links">
+    <a href="#features">Funciones</a>
+    <a href="#how">Cómo funciona</a>
+    <a href="#pricing">Precios</a>
+    <a href="#demo" class="btn-nav">Ver demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Sistema de gestión de soporte</div>
+  <h1>Controla cada solicitud.<br><em>Sin perder ninguna.</em></h1>
+  <p class="hero-sub">TicketFlow organiza las solicitudes de soporte de tu empresa — desde reportes hasta resolución — en una sola plataforma accesible desde cualquier dispositivo.</p>
+  <div class="hero-cta">
+    <a href="#demo" class="btn-primary">Ver demo en vivo →</a>
+    <a href="#pricing" class="btn-secondary">Ver precios</a>
+  </div>
+  <p class="hero-note"><strong>✓ Sin instalación</strong> · Funciona en cualquier navegador · Notificaciones automáticas</p>
+
+  <div class="mockup-wrap">
+    <div class="mockup-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <div class="mockup-url"><span>soporte.tuempresa.com</span></div>
     </div>
-    <div class="login-body">
-      <div class="login-tabs">
-        <button class="login-tab active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</button>
-        <button class="login-tab" id="tab-register" onclick="switchTab('register')">Registrarse</button>
-      </div>
-      <div id="form-login">
-        <div class="field"><label>Correo electrónico</label><input id="l-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label>
-          <div class="pass-wrap">
-            <input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-            <button class="pass-eye" type="button" onclick="togglePass('l-pass','l-eye')"><i id="l-eye" class="ti ti-eye"></i></button>
-          </div>
+    <div class="mockup-screen">
+      <div class="mock-topbar">
+        <div class="mock-logo">SISTEMA DE SOLICITUDES</div>
+        <div class="mock-user">
+          <div class="mock-badge">Super Admin</div>
+          <div class="mock-avatar">JA</div>
         </div>
-        <button class="btn-full" id="btn-login" onclick="doLogin()">Iniciar sesión</button>
       </div>
-      <div id="form-register" style="display:none">
-        <div class="field"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Tu nombre"></div>
-        <div class="field"><label>Correo electrónico</label><input id="r-email" type="email" placeholder="tucorreo@empresa.com"></div>
-        <div class="field"><label>Contraseña</label>
-          <div class="pass-wrap">
-            <input id="r-pass" type="password" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter')doRegister()">
-            <button class="pass-eye" type="button" onclick="togglePass('r-pass','r-eye')"><i id="r-eye" class="ti ti-eye"></i></button>
-          </div>
+      <div class="mock-body">
+        <div class="mock-stat"><div class="mock-stat-val">47</div><div class="mock-stat-label">Total</div></div>
+        <div class="mock-stat"><div class="mock-stat-val" style="color:#185FA5">12</div><div class="mock-stat-label">Abiertos</div></div>
+        <div class="mock-stat"><div class="mock-stat-val" style="color:#854F0B">8</div><div class="mock-stat-label">En proceso</div></div>
+        <div class="mock-stat"><div class="mock-stat-val" style="color:#3B6D11">27</div><div class="mock-stat-label">Resueltos</div></div>
+      </div>
+      <div class="mock-tickets">
+        <div class="mock-ticket">
+          <div class="mock-ticket-top"><div class="mock-ticket-title">Sin acceso a internet — Sala de reuniones</div><div class="mock-ticket-id">TK-047</div></div>
+          <div class="mock-chips"><span class="chip chip-blue">Abierto</span><span class="chip chip-gray">TI</span><span class="chip chip-gray">Red</span></div>
         </div>
-        <button class="btn-full" id="btn-register" onclick="doRegister()">Crear cuenta</button>
+        <div class="mock-ticket">
+          <div class="mock-ticket-top"><div class="mock-ticket-title">Aire acondicionado no enfría — Piso 3</div><div class="mock-ticket-id">TK-046</div></div>
+          <div class="mock-chips"><span class="chip chip-amber">En proceso</span><span class="chip chip-purple">Mantenimiento</span></div>
+        </div>
+        <div class="mock-ticket">
+          <div class="mock-ticket-top"><div class="mock-ticket-title">Cambio de teclado — Recepción</div><div class="mock-ticket-id">TK-045</div></div>
+          <div class="mock-chips"><span class="chip chip-green">Resuelto</span><span class="chip chip-gray">TI</span><span class="chip chip-gray">Hardware</span></div>
+        </div>
       </div>
-      <div id="login-msg" class="login-msg" style="display:none"></div>
     </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos-section">
+  <p class="logos-label">Diseñado para empresas con múltiples departamentos y sucursales</p>
+  <div class="logos-row">
+    <span class="logo-item">Hoteles</span>
+    <span class="logo-item">Clínicas</span>
+    <span class="logo-item">Colegios</span>
+    <span class="logo-item">Empresas</span>
+    <span class="logo-item">Centros Comerciales</span>
   </div>
 </div>
 
-<div class="app-wrap" id="app-wrap">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title">DISTRITO HOTELERO — SOLICITUDES</div>
-      <div class="topbar-divider"></div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4)">Plaza San Martín</div>
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Funcionalidades</div>
+  <h2 class="section-title">Todo lo que necesitas,<br>nada de lo que no.</h2>
+  <p class="section-sub">Un sistema completo sin complicaciones. Fácil de usar para cualquier empleado desde el primer día.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎫</div>
+      <div class="feature-title">Tickets organizados</div>
+      <p class="feature-desc">Cada solicitud queda registrada con categoría, prioridad, hotel y departamento. Sin perder nada en WhatsApp o llamadas.</p>
     </div>
-    <div class="topbar-right">
-      <span id="topbar-role-badge" class="role-badge" style="display:none"></span>
-      <div class="user-pill"><div class="user-avatar" id="topbar-avatar">—</div><span id="topbar-name"></span></div>
-      <button class="btn-topbar" onclick="doLogout()"><i class="ti ti-logout"></i>Salir</button>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <div class="feature-title">Notificaciones automáticas</div>
+      <p class="feature-desc">El equipo de soporte recibe un correo al instante cuando llega un ticket. El solicitante es notificado cuando se resuelve.</p>
     </div>
-  </div>
-  <div class="app">
-    <div id="nav-tabs-wrap" style="display:none">
-      <div class="nav-tabs">
-        <button class="nav-tab active" id="nav-solicitudes" onclick="showView('solicitudes')"><i class="ti ti-ticket" style="margin-right:5px"></i>Solicitudes</button>
-        <button class="nav-tab" id="nav-reportes" onclick="showView('reportes')"><i class="ti ti-chart-bar" style="margin-right:5px"></i>Reportes</button>
-      </div>
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <div class="feature-title">Roles y permisos</div>
+      <p class="feature-desc">Cada usuario ve solo sus solicitudes. Los administradores tienen vista completa con filtros y estadísticas.</p>
     </div>
-
-    <!-- SOLICITUDES -->
-    <div id="view-solicitudes">
-      <div class="page-head">
-        <div><h2 id="page-title">Mis solicitudes</h2><p id="page-sub"></p></div>
-        <button class="btn-primary" onclick="openNew()"><i class="ti ti-plus"></i>Nueva solicitud</button>
-      </div>
-      <div id="dept-tabs-wrap" style="display:none">
-        <div class="dept-tabs">
-          <button class="dept-tab active" id="tab-todos" onclick="setDeptFilter('todos')"><i class="ti ti-layout-grid" style="margin-right:4px"></i>Todos</button>
-          <button class="dept-tab" id="tab-TI" onclick="setDeptFilter('TI')"><i class="ti ti-device-desktop" style="margin-right:4px"></i>TI</button>
-          <button class="dept-tab" id="tab-Mantenimiento" onclick="setDeptFilter('Mantenimiento')"><i class="ti ti-tool" style="margin-right:4px"></i>Mantenimiento</button>
-        </div>
-      </div>
-      <div id="stats-wrap" style="display:none">
-        <div class="stats">
-          <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="s-total">—</div></div>
-          <div class="stat"><div class="stat-label">Abiertos</div><div class="stat-val" id="s-open">—</div></div>
-          <div class="stat"><div class="stat-label">En proceso</div><div class="stat-val" id="s-proc">—</div></div>
-          <div class="stat"><div class="stat-label">Resueltos</div><div class="stat-val" id="s-done">—</div></div>
-        </div>
-        <div class="toolbar">
-          <input type="text" id="search" placeholder="Buscar solicitudes…" oninput="render()">
-          <select id="f-estado" onchange="render()"><option value="">Todos los estados</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select>
-          <select id="f-cat" onchange="render()"><option value="">Todas las categorías</option></select>
-          <select id="f-hotel" onchange="render()"><option value="">Todos los hoteles</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select>
-          <select id="f-prio" onchange="render()"><option value="">Todas las prioridades</option><option>Alta</option><option>Media</option><option>Baja</option></select>
-        </div>
-      </div>
-      <div class="ticket-list" id="list"><div class="loading"><i class="ti ti-loader" style="font-size:20px;display:block;margin:0 auto 8px"></i>Cargando…</div></div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">Reportes y gráficas</div>
+      <p class="feature-desc">Visualiza tickets por estado, departamento, hotel y categoría. Exporta reportes a Excel con un clic.</p>
     </div>
-
-    <!-- REPORTES -->
-    <div id="view-reportes" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
-        <div><h2>Reportes</h2><p id="report-sub" style="font-size:12px;color:var(--text3);margin-top:2px"></p></div>
-        <button class="btn-export" onclick="exportCSV()"><i class="ti ti-file-spreadsheet"></i>Exportar a Excel</button>
-      </div>
-      <div style="background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:1rem">
-        <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:.75rem"><i class="ti ti-filter" style="margin-right:4px"></i>Filtrar reporte</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Departamento</div><select id="rf-dept" class="rf-select"><option value="">Todos</option><option>TI</option><option>Mantenimiento</option></select></div>
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hotel</div><select id="rf-hotel" class="rf-select"><option value="">Todos</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select></div>
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Estado</div><select id="rf-estado" class="rf-select"><option value="">Todos</option><option>Abierto</option><option>En proceso</option><option>Resuelto</option><option>Cerrado</option></select></div>
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Prioridad</div><select id="rf-prio" class="rf-select"><option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Desde</div><input type="date" id="rf-desde" class="rf-input"></div>
-          <div><div style="font-size:11px;color:var(--text3);margin-bottom:3px">Hasta</div><input type="date" id="rf-hasta" class="rf-input"></div>
-          <button onclick="applyReportFilter()" style="background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:30px;font-size:12px;cursor:pointer;font-weight:500">Aplicar</button>
-          <button onclick="clearReportFilter()" style="background:transparent;border:.5px solid var(--border2);border-radius:var(--radius);padding:0 12px;height:30px;font-size:12px;cursor:pointer;color:var(--text2)">Limpiar</button>
-        </div>
-      </div>
-      <div class="report-summary">
-        <div class="summary-card"><div class="summary-val" id="r-total">—</div><div class="summary-label">Total</div></div>
-        <div class="summary-card"><div class="summary-val" style="color:var(--blue-text)" id="r-abierto">—</div><div class="summary-label">Abiertos</div></div>
-        <div class="summary-card"><div class="summary-val" style="color:var(--amber-text)" id="r-proceso">—</div><div class="summary-label">En proceso</div></div>
-        <div class="summary-card"><div class="summary-val" style="color:var(--green-text)" id="r-resuelto">—</div><div class="summary-label">Resueltos</div></div>
-      </div>
-      <div class="reports-grid">
-        <div class="chart-card"><h3>Por estado</h3><div class="chart-wrap"><canvas id="chart-estado"></canvas></div></div>
-        <div class="chart-card"><h3>Por departamento</h3><div class="chart-wrap"><canvas id="chart-dept"></canvas></div></div>
-        <div class="chart-card"><h3>Por hotel</h3><div class="chart-wrap"><canvas id="chart-hotel"></canvas></div></div>
-        <div class="chart-card"><h3>Por prioridad</h3><div class="chart-wrap"><canvas id="chart-prio"></canvas></div></div>
-      </div>
-      <div class="chart-card" style="margin-bottom:1rem"><h3>Por categoría</h3><div class="chart-wrap" style="height:260px"><canvas id="chart-cat"></canvas></div></div>
+    <div class="feature-card">
+      <div class="feature-icon">🏨</div>
+      <div class="feature-title">Multi-sucursal</div>
+      <p class="feature-desc">Gestiona solicitudes de múltiples hoteles, sucursales o edificios desde un solo panel.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📱</div>
+      <div class="feature-title">Desde cualquier dispositivo</div>
+      <p class="feature-desc">Funciona en computadora, tablet y celular. Sin instalar nada — solo abrir el navegador.</p>
     </div>
   </div>
-  <div class="footer">Desarrollado por <span>Josué Aguilar</span> · Técnico TI · Distrito Hotelero Plaza San Martín · 2026</div>
-</div>
+</section>
 
-<div class="toast" id="toast"><i class="ti ti-check" id="toast-icon"></i><span id="toast-msg"></span></div>
-
-<div class="modal-wrap" id="modal-new">
-  <div class="modal">
-    <div class="modal-head"><h2><i class="ti ti-plus" style="margin-right:5px"></i>Nueva solicitud</h2><button class="close-btn" onclick="closeNew()">×</button></div>
-    <div class="field"><label>Departamento *</label><select id="n-dept" onchange="updateCats()"><option value="TI">TI — Soporte Tecnológico</option><option value="Mantenimiento">Mantenimiento</option></select></div>
-    <div class="field"><label>Hotel *</label><select id="n-hotel"><option value="">Selecciona el hotel</option><option>Hotel Plaza Juan Carlos</option><option>Hotel Plaza San Martín</option><option>Hotel Plaza del Libertador</option><option>Hotel Plaza del General</option></select></div>
-    <div class="field"><label>Título *</label><input id="n-title" type="text" placeholder="Describe el problema brevemente"></div>
-    <div class="field"><label>Descripción</label><textarea id="n-desc" placeholder="Detalla el problema, ubicación, equipo afectado…"></textarea></div>
-    <div class="row2">
-      <div class="field"><label>Categoría</label><select id="n-cat"></select></div>
-      <div class="field"><label>Prioridad</label><select id="n-prio"><option>Media</option><option>Alta</option><option>Baja</option></select></div>
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-label">Cómo funciona</div>
+    <h2 class="section-title">De reporte a resolución<br>en minutos.</h2>
+    <p class="section-sub">Un flujo simple que cualquier empleado puede seguir sin capacitación extensa.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">El empleado reporta</div>
+        <p class="step-desc">Entra al sistema, describe el problema y selecciona el hotel y categoría.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">El técnico es notificado</div>
+        <p class="step-desc">El equipo de soporte recibe un correo inmediato con todos los detalles del ticket.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Se gestiona el ticket</div>
+        <p class="step-desc">El admin cambia el estado: Abierto → En proceso → Resuelto, con observaciones.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">El solicitante es avisado</div>
+        <p class="step-desc">Al marcar como resuelto, el empleado recibe un correo de confirmación automáticamente.</p>
+      </div>
     </div>
-    <div class="modal-btns"><button class="btn-cancel" onclick="closeNew()">Cancelar</button><button class="btn-submit" id="btn-create" onclick="createTicket()">Enviar solicitud</button></div>
   </div>
-</div>
+</section>
 
-<div class="modal-wrap" id="modal-det">
-  <div class="modal">
-    <div class="modal-head"><div><div style="font-size:11px;color:var(--text3)" id="d-id"></div><h2 id="d-title" style="font-size:15px;margin-top:2px"></h2></div><button class="close-btn" onclick="closeDet()">×</button></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.875rem" id="d-badges"></div>
-    <div class="detail-body" id="d-body"></div>
-    <div class="detail-grid" id="d-info"></div>
-    <div id="obs-wrap" style="display:none;margin-bottom:1rem">
-      <div class="section-label">Observación</div>
-      <textarea id="obs-text" placeholder="Agregar observación..." style="width:100%;font-size:13px;padding:8px 10px;border:.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);outline:none;resize:vertical;min-height:72px;font-family:inherit;line-height:1.5"></textarea>
-      <button onclick="saveObs()" style="margin-top:6px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);padding:0 14px;height:32px;font-size:12px;cursor:pointer;font-weight:500">Guardar observación</button>
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Precios</div>
+  <h2 class="section-title">Inversión única.<br>Sin sorpresas mensuales.</h2>
+  <p class="section-sub" style="margin:0 auto 0">Sin suscripciones. Sin licencias por usuario. Pagas una vez y el sistema es tuyo.</p>
+  <div class="pricing-cards">
+    <div class="pricing-card">
+      <span class="pricing-badge">Básico</span>
+      <div class="pricing-name">Starter</div>
+      <div class="pricing-price">$1,200 <span>pago único</span></div>
+      <p class="pricing-desc">Ideal para empresas pequeñas con un solo departamento</p>
+      <ul class="pricing-features">
+        <li>1 departamento</li>
+        <li>Hasta 3 sucursales</li>
+        <li>Login con correo y contraseña</li>
+        <li>Notificaciones por correo</li>
+        <li>Panel de admin con filtros</li>
+        <li>Dominio personalizado</li>
+        <li>Soporte 30 días</li>
+      </ul>
+      <a href="mailto:098josueaguilar@gmail.com" class="btn-pricing btn-pricing-light">Contactar →</a>
     </div>
-    <div id="obs-view" style="display:none;margin-bottom:1rem">
-      <div class="section-label">Observación del técnico</div>
-      <div id="obs-content" style="font-size:13px;color:var(--text2);line-height:1.6;padding:.875rem;background:var(--bg2);border-radius:var(--radius)"></div>
+    <div class="pricing-card featured">
+      <span class="pricing-badge">⭐ Más popular</span>
+      <div class="pricing-name">Pro</div>
+      <div class="pricing-price">$2,000 <span>pago único</span></div>
+      <p class="pricing-desc">Para empresas con múltiples departamentos y sucursales</p>
+      <ul class="pricing-features">
+        <li>Departamentos ilimitados</li>
+        <li>Sucursales ilimitadas</li>
+        <li>Roles por departamento</li>
+        <li>Notificaciones por correo corporativo</li>
+        <li>Reportes con gráficas + Excel</li>
+        <li>Fecha y hora de cierre</li>
+        <li>Dominio personalizado + HTTPS</li>
+        <li>Soporte 60 días</li>
+      </ul>
+      <a href="mailto:098josueaguilar@gmail.com" class="btn-pricing btn-pricing-dark">Contactar →</a>
     </div>
-    <div id="admin-actions" style="display:none"><div class="section-label">Cambiar estado</div><div class="status-row" id="d-status"></div></div>
-    <div class="modal-btns"><button class="btn-danger" id="btn-delete" style="display:none" onclick="deleteTicket()"><i class="ti ti-trash" style="margin-right:3px"></i>Eliminar</button><button class="btn-cancel" onclick="closeDet()">Cerrar</button></div>
   </div>
-</div>
+  <p style="font-size:13px;color:var(--gray3);margin-top:1.5rem">Mantenimiento mensual opcional: $75/mes · Incluye actualizaciones y soporte continuo</p>
+</section>
 
-<script>
-const SUPABASE_URL='https://mkaupezvsbsgehfoxxsl.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+<!-- DEMO -->
+<section class="cta-section" id="demo">
+  <div class="cta-inner">
+    <h2>Pruébalo antes de decidir.</h2>
+    <p>Accede al demo en vivo y explora todas las funcionalidades sin compromiso.</p>
+    <a href="https://jaam504.github.io/ticketflow-demo" class="btn-primary" target="_blank">Abrir demo →</a>
+    <p style="font-size:12px;color:var(--gray3);margin-top:1rem">O escríbeme directamente: <a href="mailto:098josueaguilar@gmail.com" style="color:var(--accent)">098josueaguilar@gmail.com</a></p>
+  </div>
+</section>
 
-const CATS={
-  TI:['Red','Hardware','Software','Accesos','Impresoras','UPS','Cámaras','Soporte SKILL'],
-  Mantenimiento:['Pintura','Tabla yeso','Albañilería','Diseño','Tapiz/Alfombra','Carpintería','Aire acondicionado y Refrigeración','Electricidad y Torre','Compras','Tapicería','Taller de Soldadura','Fontanería','Ascensores']
-};
-const catIcon={Red:'ti-wifi',Hardware:'ti-device-desktop',Software:'ti-apps',Accesos:'ti-key',Impresoras:'ti-printer','UPS':'ti-battery-charging','Cámaras':'ti-camera','Soporte SKILL':'ti-school','Pintura':'ti-brush','Tabla yeso':'ti-wall','Albañilería':'ti-building-arch','Diseño':'ti-palette','Tapiz/Alfombra':'ti-layout-grid','Carpintería':'ti-hammer','Aire acondicionado y Refrigeración':'ti-wind','Electricidad y Torre':'ti-bolt','Compras':'ti-shopping-cart','Tapicería':'ti-armchair','Taller de Soldadura':'ti-flame','Fontanería':'ti-droplet','Ascensores':'ti-elevator'};
-const catColor={Red:'#185FA5',Hardware:'#185FA5',Software:'#185FA5',Accesos:'#185FA5',Impresoras:'#185FA5','UPS':'#185FA5','Cámaras':'#185FA5','Soporte SKILL':'#185FA5','Pintura':'#92700A','Tabla yeso':'#92700A','Albañilería':'#92700A','Diseño':'#92700A','Tapiz/Alfombra':'#92700A','Carpintería':'#7B4F2E','Aire acondicionado y Refrigeración':'#1A6B2A','Electricidad y Torre':'#CC5500','Compras':'#5A7A00','Tapicería':'#6B4FA8','Taller de Soldadura':'#555555','Fontanería':'#B71C1C','Ascensores':'#2E5FA8'};
-const catBg={Red:'#E6F1FB',Hardware:'#E6F1FB',Software:'#E6F1FB',Accesos:'#E6F1FB',Impresoras:'#E6F1FB','UPS':'#E6F1FB','Cámaras':'#E6F1FB','Soporte SKILL':'#E6F1FB','Pintura':'#FFF9C4','Tabla yeso':'#FFF9C4','Albañilería':'#FFF9C4','Diseño':'#FFF9C4','Tapiz/Alfombra':'#FFF9C4','Carpintería':'#F3E5D8','Aire acondicionado y Refrigeración':'#E8F5E9','Electricidad y Torre':'#FFF0E6','Compras':'#F4F9E4','Tapicería':'#F0EAF9','Taller de Soldadura':'#F0F0F0','Fontanería':'#FFEBEE','Ascensores':'#E8EEF9'};
-const statClass={Abierto:'b-abierto','En proceso':'b-en-proceso',Resuelto:'b-resuelto',Cerrado:'b-cerrado'};
-const prioClass={Alta:'prio-alta',Media:'prio-media',Baja:'prio-baja'};
-const prioIcon={Alta:'ti-arrow-up',Media:'ti-minus',Baja:'ti-arrow-down'};
+<footer>
+  <div class="footer-logo">Ticket<span>Flow</span></div>
+  <p class="footer-sub">Sistema de gestión de soporte técnico y mantenimiento</p>
+  <p class="footer-contact">
+    <a href="mailto:098josueaguilar@gmail.com">098josueaguilar@gmail.com</a>
+  </p>
+  <p class="footer-copy">© 2026 TicketFlow · Desarrollado en Honduras</p>
+</footer>
 
-let allTickets=[],currentId=null,nextNum=1,currentUser=null,userRole=null,userDept=null,deptFilter='todos';
-let charts={};
-let reportFilters={dept:'',hotel:'',estado:'',prio:'',desde:'',hasta:''};
-
-function pad(n){return 'TK-'+String(n).padStart(3,'0')}
-function today(){return new Date().toISOString().slice(0,10)}
-function fmt(d){if(!d)return '—';const[y,m,dy]=d.split('-');return dy+'/'+m+'/'+y}
-function initials(n){return(n||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
-function isAdmin(){return userRole==='superadmin'||userRole==='admin'}
-
-function togglePass(inputId,eyeId){
-  const input=document.getElementById(inputId);
-  const eye=document.getElementById(eyeId);
-  if(input.type==='password'){input.type='text';eye.className='ti ti-eye-off';}
-  else{input.type='password';eye.className='ti ti-eye';}
-}
-
-function switchTab(t){
-  document.getElementById('tab-login').classList.toggle('active',t==='login');
-  document.getElementById('tab-register').classList.toggle('active',t==='register');
-  document.getElementById('form-login').style.display=t==='login'?'block':'none';
-  document.getElementById('form-register').style.display=t==='register'?'block':'none';
-  document.getElementById('login-msg').style.display='none';
-}
-
-function showMsg(msg,isError=true){
-  const el=document.getElementById('login-msg');
-  el.textContent=msg;el.className='login-msg '+(isError?'error':'success');el.style.display='block';
-}
-
-async function doLogin(){
-  const email=document.getElementById('l-email').value.trim();
-  const pass=document.getElementById('l-pass').value;
-  if(!email||!pass){showMsg('Completa todos los campos');return;}
-  const btn=document.getElementById('btn-login');btn.disabled=true;btn.textContent='Entrando…';
-  const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){showMsg(error.message);btn.disabled=false;btn.textContent='Iniciar sesión';return;}
-  await initApp(data.user);
-}
-
-async function doRegister(){
-  const name=document.getElementById('r-name').value.trim();
-  const email=document.getElementById('r-email').value.trim();
-  const pass=document.getElementById('r-pass').value;
-  if(!name||!email||!pass){showMsg('Completa todos los campos');return;}
-  if(pass.length<6){showMsg('La contraseña debe tener al menos 6 caracteres');return;}
-  const btn=document.getElementById('btn-register');btn.disabled=true;btn.textContent='Creando cuenta…';
-  const{error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){showMsg(error.message);btn.disabled=false;btn.textContent='Crear cuenta';return;}
-  showMsg('Cuenta creada. Ya puedes iniciar sesión.',false);
-  btn.disabled=false;btn.textContent='Crear cuenta';switchTab('login');
-  document.getElementById('l-email').value=email;
-}
-
-async function doLogout(){
-  await sb.auth.signOut();
-  currentUser=null;userRole=null;userDept=null;
-  document.getElementById('app-wrap').classList.remove('visible');
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('l-pass').value='';
-}
-
-async function initApp(user){
-  currentUser=user;
-  const{data:adminData}=await sb.from('admins').select('rol,departamento').eq('email',user.email).single();
-  userRole=adminData?.rol||'user';
-  userDept=adminData?.departamento||null;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app-wrap').classList.add('visible');
-  const name=user.user_metadata?.full_name||user.email;
-  document.getElementById('topbar-name').textContent=name;
-  document.getElementById('topbar-avatar').textContent=initials(name);
-  const badge=document.getElementById('topbar-role-badge');
-  if(userRole==='superadmin'){badge.textContent='Super Admin';badge.className='role-badge role-superadmin';badge.style.display='inline-flex';}
-  else if(userRole==='admin'&&userDept==='TI'){badge.textContent='Admin TI';badge.className='role-badge role-admin-ti';badge.style.display='inline-flex';}
-  else if(userRole==='admin'&&userDept==='Mantenimiento'){badge.textContent='Admin Mantenimiento';badge.className='role-badge role-admin-mant';badge.style.display='inline-flex';}
-  else{badge.style.display='none';}
-  document.getElementById('nav-tabs-wrap').style.display=isAdmin()?'block':'none';
-  document.getElementById('dept-tabs-wrap').style.display=userRole==='superadmin'?'block':'none';
-  document.getElementById('stats-wrap').style.display=isAdmin()?'block':'none';
-  if(userRole==='admin'&&userDept)deptFilter=userDept;
-  document.getElementById('page-title').textContent=userRole==='superadmin'?'Todas las solicitudes':userRole==='admin'?'Solicitudes — '+userDept:'Mis solicitudes';
-  updateFilterCats();
-  await loadTickets();
-}
-
-function updateFilterCats(){
-  const sel=document.getElementById('f-cat');
-  const cats=deptFilter==='todos'?[...CATS.TI,...CATS.Mantenimiento]:CATS[deptFilter]||[];
-  sel.innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>'<option>'+c+'</option>').join('');
-}
-
-function setDeptFilter(dept){
-  deptFilter=dept;
-  ['todos','TI','Mantenimiento'].forEach(d=>{document.getElementById('tab-'+d).classList.toggle('active',d===dept);});
-  updateFilterCats();render();
-}
-
-function showView(view){
-  document.getElementById('view-solicitudes').style.display=view==='solicitudes'?'block':'none';
-  document.getElementById('view-reportes').style.display=view==='reportes'?'block':'none';
-  document.getElementById('nav-solicitudes').classList.toggle('active',view==='solicitudes');
-  document.getElementById('nav-reportes').classList.toggle('active',view==='reportes');
-  if(view==='reportes')renderReports();
-}
-
-async function loadTickets(){
-  let query=sb.from('tickets').select('*').order('id',{ascending:false});
-  if(!isAdmin())query=query.eq('user_id',currentUser.id);
-  else if(userRole==='admin'&&userDept)query=query.eq('departamento',userDept);
-  const{data,error}=await query;
-  if(error){showToast('Error: '+error.message,true);return;}
-  allTickets=data||[];
-  if(allTickets.length>0){const m=Math.max(...allTickets.map(t=>parseInt(t.codigo.replace('TK-',''))||0));nextNum=m+1;}
-  const now=new Date();
-  document.getElementById('page-sub').textContent='Actualizado '+now.toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'});
-  render();
-}
-
-function getFiltered(){
-  if(!isAdmin())return allTickets;
-  const q=document.getElementById('search').value.toLowerCase();
-  const est=document.getElementById('f-estado').value;
-  const cat=document.getElementById('f-cat').value;
-  const hotel=document.getElementById('f-hotel').value;
-  const prio=document.getElementById('f-prio').value;
-  return allTickets.filter(t=>{
-    if(deptFilter!=='todos'&&t.departamento!==deptFilter)return false;
-    if(q&&!t.titulo.toLowerCase().includes(q)&&!(t.descripcion||'').toLowerCase().includes(q))return false;
-    if(est&&t.estado!==est)return false;
-    if(cat&&t.categoria!==cat)return false;
-    if(hotel&&t.hotel!==hotel)return false;
-    if(prio&&t.prioridad!==prio)return false;
-    return true;
-  });
-}
-
-function catBadge(cat){
-  return '<span class="badge" style="background:'+(catBg[cat]||'#f0efe9')+';color:'+(catColor[cat]||'#6b6a65')+'"><i class="ti '+(catIcon[cat]||'ti-help-circle')+'" style="margin-right:3px"></i>'+cat+'</span>';
-}
-
-function render(){
-  if(isAdmin()){
-    const src=deptFilter==='todos'?allTickets:allTickets.filter(t=>t.departamento===deptFilter);
-    document.getElementById('s-total').textContent=src.length;
-    document.getElementById('s-open').textContent=src.filter(t=>t.estado==='Abierto').length;
-    document.getElementById('s-proc').textContent=src.filter(t=>t.estado==='En proceso').length;
-    document.getElementById('s-done').textContent=src.filter(t=>t.estado==='Resuelto').length;
-  }
-  const list=getFiltered();
-  const el=document.getElementById('list');
-  if(!list.length){el.innerHTML='<div class="empty"><i class="ti ti-ticket-off"></i>No hay solicitudes que mostrar.<br><br><button onclick="openNew()" style="margin-top:8px;background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px">Crear primera solicitud</button></div>';return;}
-  el.innerHTML=list.map(t=>{
-    const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
-    return '<div class="ticket" onclick="openDet('+t.id+')" role="button" tabindex="0">'
-      +'<div class="ticket-top"><div class="ticket-title">'+t.titulo+'</div><div class="ticket-id">'+t.codigo+'</div></div>'
-      +'<div class="ticket-meta"><span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+catBadge(t.categoria)
-      +'<span class="cat-tag"><i class="ti ti-building" style="margin-right:3px"></i>'+(t.hotel||'—')+'</span></div>'
-      +'<div class="ticket-desc">'+(t.descripcion||'')+'</div>'
-      +'<div class="ticket-foot"><div class="user-info-row"><span class="avatar">'+initials(t.solicitante)+'</span>'+(t.solicitante||'—')+'</div>'
-      +'<div style="display:flex;align-items:center;gap:10px"><span class="prio '+prioClass[t.prioridad]+'"><i class="ti '+prioIcon[t.prioridad]+'"></i>'+t.prioridad+'</span><span class="date">'+fmt(t.fecha)+'</span></div></div>'
-      +'</div>';
-  }).join('');
-}
-
-function updateCats(){
-  const dept=document.getElementById('n-dept').value;
-  document.getElementById('n-cat').innerHTML=CATS[dept].map(c=>'<option>'+c+'</option>').join('');
-}
-
-function openNew(){updateCats();document.getElementById('modal-new').classList.add('open');}
-function closeNew(){
-  document.getElementById('modal-new').classList.remove('open');
-  document.getElementById('n-title').value='';document.getElementById('n-desc').value='';document.getElementById('n-hotel').value='';
-  document.getElementById('btn-create').disabled=false;document.getElementById('btn-create').textContent='Enviar solicitud';
-}
-
-async function createTicket(){
-  const hotel=document.getElementById('n-hotel').value;
-  const titulo=document.getElementById('n-title').value.trim();
-  if(!hotel){document.getElementById('n-hotel').focus();return;}
-  if(!titulo){document.getElementById('n-title').focus();return;}
-  const btn=document.getElementById('btn-create');btn.disabled=true;btn.textContent='Enviando…';
-  const nombre=currentUser.user_metadata?.full_name||currentUser.email;
-  const codigo=pad(nextNum);
-  const dept=document.getElementById('n-dept').value;
-  const{error}=await sb.from('tickets').insert([{codigo,titulo,descripcion:document.getElementById('n-desc').value.trim()||'Sin descripción adicional.',categoria:document.getElementById('n-cat').value,prioridad:document.getElementById('n-prio').value,estado:'Abierto',solicitante:nombre,fecha:today(),user_id:currentUser.id,user_email:currentUser.email,departamento:dept,hotel:hotel}]);
-  if(error){showToast('Error: '+error.message,true);btn.disabled=false;btn.textContent='Enviar solicitud';return;}
-  nextNum++;closeNew();await loadTickets();showToast('Solicitud '+codigo+' enviada correctamente');
-}
-
-function openDet(id){
-  currentId=id;
-  const t=allTickets.find(x=>x.id===id);
-  document.getElementById('d-id').textContent=t.codigo;
-  document.getElementById('d-title').textContent=t.titulo;
-  document.getElementById('d-body').textContent=t.descripcion||'Sin descripción.';
-  const deptBadge=t.departamento==='TI'?'<span class="badge b-ti">TI</span>':'<span class="badge b-mant">Mantenimiento</span>';
-  document.getElementById('d-badges').innerHTML='<span class="badge '+(statClass[t.estado]||'b-abierto')+'">'+t.estado+'</span>'+deptBadge+catBadge(t.categoria)+'<span class="prio '+prioClass[t.prioridad]+'" style="font-size:12px;display:flex;align-items:center;gap:3px"><i class="ti '+prioIcon[t.prioridad]+'"></i>Prioridad '+t.prioridad+'</span>';
-  document.getElementById('d-info').innerHTML='<div class="di"><div class="di-label">Solicitante</div><div class="di-val">'+(t.solicitante||'—')+'</div></div><div class="di"><div class="di-label">Correo</div><div class="di-val">'+(t.user_email||'—')+'</div></div><div class="di"><div class="di-label">Hotel</div><div class="di-val">'+(t.hotel||'—')+'</div></div><div class="di"><div class="di-label">Fecha</div><div class="di-val">'+fmt(t.fecha)+'</div></div>';
-  if(isAdmin()){
-    document.getElementById('obs-wrap').style.display='block';
-    document.getElementById('obs-view').style.display='none';
-    document.getElementById('obs-text').value=t.observacion||'';
-  }else{
-    document.getElementById('obs-wrap').style.display='none';
-    if(t.observacion){document.getElementById('obs-view').style.display='block';document.getElementById('obs-content').textContent=t.observacion;}
-    else{document.getElementById('obs-view').style.display='none';}
-  }
-  document.getElementById('admin-actions').style.display=isAdmin()?'block':'none';
-  document.getElementById('btn-delete').style.display=isAdmin()?'inline-flex':'none';
-  if(isAdmin()){
-    const estados=['Abierto','En proceso','Resuelto','Cerrado'];
-    document.getElementById('d-status').innerHTML=estados.map(e=>{
-      const blocked=e==='Cerrado'&&t.estado!=='Resuelto';
-      return '<button class="status-btn '+(e===t.estado?'active':'')+'" '+(blocked?'disabled title="El ticket debe estar Resuelto primero"':'onclick="setStatus(\''+e+'\')"')+'>'+e+'</button>';
-    }).join('');
-  }
-  document.getElementById('modal-det').classList.add('open');
-}
-
-function closeDet(){document.getElementById('modal-det').classList.remove('open');currentId=null;}
-
-async function setStatus(est){
-  const{error}=await sb.from('tickets').update({estado:est}).eq('id',currentId);
-  if(error){showToast('Error: '+error.message,true);return;}
-  if(est==='Resuelto'){
-    const t=allTickets.find(x=>x.id===currentId);
-    if(t&&t.user_email){
-      fetch('https://mkaupezvsbsgehfoxxsl.supabase.co/functions/v1/super-task',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYXVwZXp2c2JzZ2VoZm94eHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NjA0NzksImV4cCI6MjA5NzUzNjQ3OX0.40xJtvdkkXTFaPZEWDBFaj9RfFkOLF1ZC5_nBDPGElM'},body:JSON.stringify({tipo:'resuelto',codigo:t.codigo,titulo:t.titulo,categoria:t.categoria,prioridad:t.prioridad,solicitante:t.solicitante,descripcion:t.descripcion,fecha:t.fecha,user_email:t.user_email})}).catch(()=>{});
-    }
-  }
-  closeDet();await loadTickets();showToast('Estado actualizado a: '+est);
-}
-
-async function saveObs(){
-  const obs=document.getElementById('obs-text').value.trim();
-  const{error}=await sb.from('tickets').update({observacion:obs}).eq('id',currentId);
-  if(error){showToast('Error: '+error.message,true);return;}
-  await loadTickets();showToast('Observación guardada');
-}
-
-async function deleteTicket(){
-  if(!confirm('¿Eliminar esta solicitud?'))return;
-  const codigo=allTickets.find(x=>x.id===currentId)?.codigo;
-  const{error}=await sb.from('tickets').delete().eq('id',currentId);
-  if(error){showToast('Error: '+error.message,true);return;}
-  closeDet();await loadTickets();showToast('Solicitud '+codigo+' eliminada');
-}
-
-// REPORTES
-function getReportTickets(){
-  return allTickets.filter(t=>{
-    if(reportFilters.dept&&t.departamento!==reportFilters.dept)return false;
-    if(reportFilters.hotel&&t.hotel!==reportFilters.hotel)return false;
-    if(reportFilters.estado&&t.estado!==reportFilters.estado)return false;
-    if(reportFilters.prio&&t.prioridad!==reportFilters.prio)return false;
-    if(reportFilters.desde&&t.fecha<reportFilters.desde)return false;
-    if(reportFilters.hasta&&t.fecha>reportFilters.hasta)return false;
-    return true;
-  });
-}
-
-function applyReportFilter(){
-  reportFilters={
-    dept:document.getElementById('rf-dept').value,
-    hotel:document.getElementById('rf-hotel').value,
-    estado:document.getElementById('rf-estado').value,
-    prio:document.getElementById('rf-prio').value,
-    desde:document.getElementById('rf-desde').value,
-    hasta:document.getElementById('rf-hasta').value
-  };
-  renderReports();
-}
-
-function clearReportFilter(){
-  ['rf-dept','rf-hotel','rf-estado','rf-prio','rf-desde','rf-hasta'].forEach(id=>document.getElementById(id).value='');
-  reportFilters={dept:'',hotel:'',estado:'',prio:'',desde:'',hasta:''};
-  renderReports();
-}
-
-function makeChart(id,type,labels,data,colors,bgColors){
-  if(charts[id]){charts[id].destroy();delete charts[id];}
-  const canvas=document.getElementById(id);
-  if(!canvas)return;
-  charts[id]=new Chart(canvas.getContext('2d'),{
-    type,
-    data:{labels,datasets:[{data,backgroundColor:bgColors||colors,borderColor:type==='doughnut'?'transparent':colors,borderWidth:0,borderRadius:type==='bar'?4:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:type==='bar'?'bottom':'right',labels:{font:{size:10},boxWidth:10,padding:8}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},x:{ticks:{font:{size:9}},grid:{display:false}}}:{}}
-  });
-}
-
-function renderReports(){
-  const tickets=getReportTickets();
-  document.getElementById('report-sub').textContent=tickets.length+' tickets · Actualizado '+new Date().toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('r-total').textContent=tickets.length;
-  document.getElementById('r-abierto').textContent=tickets.filter(t=>t.estado==='Abierto').length;
-  document.getElementById('r-proceso').textContent=tickets.filter(t=>t.estado==='En proceso').length;
-  document.getElementById('r-resuelto').textContent=tickets.filter(t=>t.estado==='Resuelto').length;
-  const cnt=(key,vals)=>vals.map(v=>tickets.filter(t=>t[key]===v).length);
-  makeChart('chart-estado','doughnut',['Abierto','En proceso','Resuelto','Cerrado'],cnt('estado',['Abierto','En proceso','Resuelto','Cerrado']),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
-  makeChart('chart-dept','doughnut',['TI','Mantenimiento'],cnt('departamento',['TI','Mantenimiento']),['#185FA5','#6B21A8'],['#E6F1FB','#F0EAFB']);
-  const hoteles=['Hotel Plaza Juan Carlos','Hotel Plaza San Martín','Hotel Plaza del Libertador','Hotel Plaza del General'];
-  makeChart('chart-hotel','bar',hoteles.map(h=>h.replace('Hotel Plaza ','')),cnt('hotel',hoteles),['#185FA5','#854F0B','#3B6D11','#5F5E5A'],['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8']);
-  makeChart('chart-prio','doughnut',['Alta','Media','Baja'],cnt('prioridad',['Alta','Media','Baja']),['#A32D2D','#854F0B','#3B6D11'],['#FCEBEB','#FAEEDA','#EAF3DE']);
-  const allCats=[...CATS.TI,...CATS.Mantenimiento];
-  const nonZero=allCats.map(c=>({c,n:tickets.filter(t=>t.categoria===c).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
-  const COLORS=['#185FA5','#854F0B','#3B6D11','#5F5E5A','#6B21A8','#A32D2D','#2E5FA8','#5A7A00','#CC5500','#1A6B2A','#7B4F2E','#92700A','#555555','#B71C1C','#2E5FA8'];
-  const BGSQ=['#E6F1FB','#FAEEDA','#EAF3DE','#F1EFE8','#F0EAFB','#FCEBEB','#E8EEF9','#F4F9E4','#FFF0E6','#E8F5E9','#F3E5D8','#FFF9C4','#F0F0F0','#FFEBEE','#E8EEF9'];
-  makeChart('chart-cat','bar',nonZero.map(x=>x.c),nonZero.map(x=>x.n),COLORS,BGSQ);
-}
-
-function exportCSV(){
-  const tickets=getReportTickets();
-  if(!tickets.length){showToast('No hay tickets para exportar',true);return;}
-  const headers=['Código','Título','Descripción','Departamento','Hotel','Categoría','Estado','Prioridad','Solicitante','Correo','Fecha','Observación'];
-  const rows=tickets.map(t=>[t.codigo,t.titulo,t.descripcion,t.departamento,t.hotel,t.categoria,t.estado,t.prioridad,t.solicitante,t.user_email,t.fecha,t.observacion]);
-  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
-  const csv='\uFEFF'+[headers,...rows].map(r=>r.map(esc).join(',')).join('\r\n');
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='Reporte_Tickets_'+new Date().toISOString().slice(0,10)+'.csv';
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
-  showToast('Exportado — '+tickets.length+' tickets');
-}
-
-function showToast(msg,isError=false){
-  const el=document.getElementById('toast');
-  document.getElementById('toast-msg').textContent=msg;
-  document.getElementById('toast-icon').className=isError?'ti ti-alert-circle':'ti ti-check';
-  el.className='toast show'+(isError?' error':'');
-  setTimeout(()=>el.classList.remove('show'),4000);
-}
-
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeNew();closeDet();}});
-sb.auth.getSession().then(({data:{session}})=>{if(session)initApp(session.user);});
-sb.auth.onAuthStateChange((_,session)=>{if(!session&&currentUser)doLogout();});
-</script>
 </body>
 </html>
